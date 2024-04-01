@@ -1,0 +1,7 @@
+    GET /states (Index)
+    GET /states/create (Create)
+    POST /states (Store)
+    GET /states/{state} (Show)
+    GET /states/{state}/edit (Edit)
+    PUT/PATCH /states/{state} (Update)
+    DELETE /states/{state} (Destroy)
