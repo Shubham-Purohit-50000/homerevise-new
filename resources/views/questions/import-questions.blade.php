@@ -67,18 +67,18 @@
                             @csrf 
                             <div class="form-group" id="correct_answere">
                                 <label for="correct_ans">Add Question File</label>
-                                <input type="file" name="questionsFile" class="form-control" accept=".xls, .ods">
+                                <input type="file" name="questionsFile" class="form-control" accept=".xls,.xlsx, .ods">
                                 @error('questionsFile')
                                     <span class="text-danger">Please select question file.</span>
                                 @enderror
                             </div> 
-                            <div class="form-group" id="imageFile">
+                            {{--<div class="form-group" id="imageFile">
                                 <label for="correct_ans">Add Image File</label>
                                 <input type="file" name="imageFile" class="form-control" accept=".zip">
                                 @error('questionsFile')
                                     <span class="text-danger">Please select question file.</span>
                                 @enderror
-                            </div> 
+                            </div> --}}
                             <div class="form-group">
                                 <button type="submit" class="btn btn btn-success text-white">Submit</button>
                             </div>
