@@ -214,7 +214,7 @@ class QuestionController extends Controller
     }
 
     public function bulkUpload(Request $request){
-        if($request->all('questionsFile')['questionsFile'] || $request->all('imageFile')['imageFile']){
+        if($request->all('questionsFile')['questionsFile']){
             if($request->all('questionsFile')['questionsFile']){
                 $file = $request->file('questionsFile');
                 $spreadsheet = IOFactory::load($file);
@@ -240,9 +240,18 @@ class QuestionController extends Controller
                         $question->chapter_id = $column[3];
                         $question->topic_id = $column[4];
                         $question->questions = $column[5];
-                        $question->options = $column[6];
+                        $question->questionsImage = $column[6];
                         $question->correct_answer = $column[7];
                         $question->correct_marks = $column[8];
+                        $options = [];
+                        for ($i = 9, $letter = 'A'; isset($column[$i]); $i++, $letter++) {
+                            // Ensure the current index exists and is not null
+                            if (isset($column[$i])) {
+                                // Process $column[$i] here
+                                $options[$letter] = $column[$i];
+                            }
+                        }
+                        $question->options = json_encode($options);
                         $question->save();
                     }
                 }else{
