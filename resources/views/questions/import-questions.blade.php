@@ -18,6 +18,10 @@
         line-height: 1.5;
         padding-top: 10px;
     }
+    li>p{
+        margin: 0;
+        padding-top:5px;
+    }
 </style>
 <div class="page-wrapper">
     <!-- ============================================================== -->
@@ -40,7 +44,7 @@
             <div class="col-7">
                 <div class="text-end upgrade-btn">
                     <a href="{{url('admin/questions')}}" class="btn btn-danger text-white">Question List</a>
-                    <a href="{{url('/storage/uploads/QuestionSample.ods')}}" class="btn btn-danger text-white">Download Sample </a>
+                    <a href="{{url('/storage/uploads/questionbulkupload.xlsx')}}" class="btn btn-danger text-white">Download Sample </a>
 
                 </div>
             </div>
@@ -71,6 +75,13 @@
                                 @error('questionsFile')
                                     <span class="text-danger">Please select question file.</span>
                                 @enderror
+                                @error('error')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+
+                                @error('error')
+                                    <div><p style="color:red;">{{ $message }}</p></div>
+                                @enderror
                             </div> 
                             {{--<div class="form-group" id="imageFile">
                                 <label for="correct_ans">Add Image File</label>
@@ -93,13 +104,17 @@
                         <div class="content">
                             <ul>
                                 <li>Please Download the Questions Sample File from the top right corner for better understanding.</li>
-                                <li>For options kindly follow this rule: <br>
-                                    {"A": " Option one", "B": " Option two", "C": " Option three", "D": " Option four",...............}
+                                <li>In Question Type please follow : <br>
+                                    <p><strong>MSA </strong>for Multiple Choice Single Answere.</p>
+                                    <p><strong>TOF </strong>for True or False.</p>
+                                    <p><strong>FIB </strong>for Fill in the Blanks.</p>
+                                    <p><strong>SAQ </strong> for Short Answer Question.</p>
                                 </li>
                                 <li>for adding the image in questions kindly use this formate:- <br>
-                                    &lt;img src=http://homerevise.co/storage/uploads/images/questions/images/imagename.extention>
+                                    &lt;img src=http://homerevise.co/storage/uploads/images/questions/images/imagename.extention> <br>
+                                    Or copy the image url directly from the <a href="/admin/gallery">Gallery Section.</a>
                                 </li>
-                                <li>Kindly add all the related image in a folder with name of images and convert it into zip file and upload it.</li>
+                                <li>Kindly add all the related fields carefully.</li>
                             </ul>
                         </div>
                     </div>

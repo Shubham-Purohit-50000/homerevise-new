@@ -232,27 +232,33 @@ class QuestionController extends Controller
 
                 if(count($result) > 0){
 
-                    foreach ($result as $column){
-                        $question = new Questions;
-                        $question->question_type = $column[0];
-                        $question->standard_id = $column[1];
-                        $question->subject_id = $column[2];
-                        $question->chapter_id = $column[3];
-                        $question->topic_id = $column[4];
-                        $question->questions = $column[5];
-                        $question->questionsImage = $column[6];
-                        $question->correct_answer = $column[7];
-                        $question->correct_marks = $column[8];
-                        $options = [];
-                        for ($i = 9, $letter = 'A'; isset($column[$i]); $i++, $letter++) {
-                            // Ensure the current index exists and is not null
-                            if (isset($column[$i])) {
-                                // Process $column[$i] here
-                                $options[$letter] = $column[$i];
+                    foreach ($result as $column){ 
+                        $question = new Questions; 
+                        if (!empty($column[0]) && !empty($column[1]) && !empty($column[2]) && !empty($column[3]) && !empty($column[5]) && !empty($column[6]) && !empty($column[7]) && !empty($column[8])) {
+                            $question->question_type = $column[0];
+                            $question->standard_id = $column[1];
+                            $question->subject_id = $column[2];
+                            $question->chapter_id = $column[3];
+                            $question->topic_id = $column[4];
+                            $question->questions = $column[5];
+                            $question->questionsImage = $column[6];
+                            $question->correct_answer = $column[7];
+                            $question->correct_marks = $column[8];
+                            
+                            $options = [];
+                            for ($i = 9, $letter = 'A'; isset($column[$i]); $i++, $letter++) {
+                                // Ensure the current index exists and is not null
+                                if (isset($column[$i])) {
+                                    // Process $column[$i] here
+                                    $options[$letter] = $column[$i];
+                                }
                             }
+                            $question->options = json_encode($options);
+                            $question->save();
+                        } else {
+                            return redirect()->back()->with('error', 'There is some error in file.');
                         }
-                        $question->options = json_encode($options);
-                        $question->save();
+                        
                     }
                 }else{
                     return redirect()->route('questions.index')
@@ -260,25 +266,25 @@ class QuestionController extends Controller
                 }
             }
 
-            if($request->all('imageFile')['imageFile']){
-                $file = $request->file('imageFile');
-                $zipPath = $request->file('imageFile')->store('uploads/zips', 'public');
+            // if($request->all('imageFile')['imageFile']){
+            //     $file = $request->file('imageFile');
+            //     $zipPath = $request->file('imageFile')->store('uploads/zips', 'public');
 
-                // Get the full path to the uploaded zip file
-                $zipFilePath = Storage::disk('public')->path($zipPath);
+            //     // Get the full path to the uploaded zip file
+            //     $zipFilePath = Storage::disk('public')->path($zipPath);
 
-                // Extract the images from the zip file
-                $zip = new ZipArchive();
-                if ($zip->open($zipFilePath) === true) {
-                    $extractPath = public_path('storage/uploads/images/questions/');
-                    $zip->extractTo($extractPath);
-                    $zip->close();
-                }
-                return redirect('/admin/questions/import-questions')
-                ->with('success', 'Image File Uploaded.');
-            }
+            //     // Extract the images from the zip file
+            //     $zip = new ZipArchive();
+            //     if ($zip->open($zipFilePath) === true) {
+            //         $extractPath = public_path('storage/uploads/images/questions/');
+            //         $zip->extractTo($extractPath);
+            //         $zip->close();
+            //     }
+            //     return redirect('/admin/questions/import-questions')
+            //     ->with('success', 'Image File Uploaded.');
+            // }
 
-            return redirect('/admin/questions/import-questions')
+            return redirect()->route('questions.index')
             ->with('success', 'Data Imported Successfully.');
 
         }

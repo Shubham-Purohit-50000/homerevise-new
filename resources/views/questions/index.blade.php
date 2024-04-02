@@ -54,6 +54,7 @@
                                 <tr class="bg-light">
                                     <th class="border-top-0">#ID</th>
                                     <th class="border-top-0">Questions</th>
+                                    <th class="border-top-0">Questions Image</th>
                                     <th class="border-top-0">Type</th>
                                     <th class="border-top-0">Standard</th>
                                     <th class="border-top-0">Subject</th>
@@ -66,6 +67,7 @@
                                 <tr>
                                     <td>{{$item->id}}</td>
                                     <td style="width: 25%;">{!!$item->questions!!}</td>
+                                    <td style="text-align:center;">@if($item->questionsImage)<img src="{{$item->questionsImage}}" width="50px">@else NA @endif</td>
                                     <td>{{$item->question_type}}</td>
                                     <td>{{$item->standard->name}}</td>
                                     <td>{{$item->subject->name}}</td>
