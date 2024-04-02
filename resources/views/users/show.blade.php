@@ -28,6 +28,7 @@
             </div>
             <div class="col-7">
                 <div class="text-end upgrade-btn">
+                    <a href="{{route('users.edit', ['user'=>$user->id])}}"><button class="btn btn-info"><span class="mdi mdi-pen"></span> Edit</button></a>
                     <a href="{{url('admin/user/deregister/device', ['user'=>$user->id])}}" class="btn btn-danger text-white" onclick="return confirmDelete('Are you sure you want to remove registered device from user account? This action cannot be undone.')">Remove Register Device</a>
                 </div>
             </div>
@@ -108,7 +109,7 @@
                                     <th class="border-top-0">C Name</th>
                                     <th class="border-top-0">C Duration</th>
                                     <th class="border-top-0">Activation Date</th>
-                                    <th class="border-top-0">Expire Date</th>
+                                    <th class="border-top-0">Expire Date/Count</th>
                                     <th class="border-top-0">Action</th>
                                 </tr>
                             </thead>
@@ -130,11 +131,11 @@
                                             $expiry_date = Carbon::parse($activation->expiry_date);
                                             $expiry_date = $expiry_date->format('Y-M-d');
                                         ?>
-                                        {{$expiry_date}}
+                                        {{$activation->course->duration ? $expiry_date : $activation->course->access_count."(remaining count)"}}
                                     </td>
                                     <td>
                                         <button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#myModal_{{$activation->id}}">
-                                            <span class="mdi mdi-eye"></span> Duration
+                                            <span class="mdi mdi-eye"></span> Update
                                         </button>
                                         <!-- modal started here -->
                                             <div class="modal fade" id="myModal_{{$activation->id}}">

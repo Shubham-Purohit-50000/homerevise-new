@@ -53,7 +53,7 @@
             </div>
             <div class="col-7">
                 <div class="text-end upgrade-btn mx-1">
-                    <a href="javascript:void(0);" data-toggle="modal" data-target="#imageBulkUpload" class="btn btn-danger text-white">Upload Image</a>
+                    <a href="javascript:void(0);" data-toggle="modal" data-target="#imageBulkUpload" class="btn btn-danger text-white">Upload Image Zip</a>
                 </div>
             </div>
             <div class="modal fade" id="imageBulkUpload" tabindex="-1" role="dialog" aria-labelledby="imageBulkUploadLabel" aria-hidden="true">
@@ -66,12 +66,13 @@
                             <div class="modal-body">
                                 @csrf
                                 <div class="form-group">
-                                    <input type="file" name="file" class="form-control" id="file" required>
+                                    <input type="file" name="file" class="form-control" id="file" accept=".zip" required>
+                                    <small>Here you can only upload .zip files of images.</small>
                                 </div> 
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Save</button>
+                                <button type="submit" class="btn btn-primary">Upload</button>
                             </div>
                         </form>
                     </div>
@@ -115,7 +116,7 @@
                                         <a href="{{route('gallery.edit', ['id'=>$image->id])}}" ><button class="btn btn-sm btn-info"><span class="mdi mdi-pen"></span> Edit</button></a>
                                         <a href="javascript:void(0);">
                                             <button onclick="copyToClipboard('{{$image->url}}', 'copyButton{{$key}}')" id="copyButton{{$key}}" class="btn btn-sm btn-info">
-                                                <span class="mdi mdi-content-copy"></span> Copy Image
+                                                <span class="mdi mdi-content-copy"></span> Copy Image Url
                                             </button>
                                         </a>
                                         <form action="{{ route('gallery.destroy', ['id' => $image->id]) }}" method="POST" class="d-inline">
