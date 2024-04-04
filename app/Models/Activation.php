@@ -13,6 +13,7 @@ class Activation extends Model
         'activation_key',
         'activation_time',
         'expiry_date',
+        'expiry_count',
     ];
 
     public function course()

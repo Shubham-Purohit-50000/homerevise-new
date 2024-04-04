@@ -5,10 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use App\Models\User;
 use App\Models\Activation;
+use App\Models\AppUsage;
+use App\Models\PlayedTopics;
+use App\Models\QuizAnalytics;
 use Illuminate\Http\Request;
 use Hash;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
+use Illuminate\Database\QueryException; // Import QueryException class
 
 class UserController extends Controller
 {
@@ -40,7 +44,8 @@ class UserController extends Controller
         if($activation->user_id == null){
             $activation->user_id = $user->id;
             $activation->activation_time = Carbon::now();
-            $activation->save();
+            $activation->expiry_date = Carbon::now();
+            // $activation->save();
         }else{
             return redirect()->route('users.index')->with('error', 'This activation key is already in use, please asign a new key to this user');
         }
@@ -96,11 +101,13 @@ class UserController extends Controller
             'activation_key' => 'required|exists:activations,activation_key',
         ]);
 
-        $activation = Activation::where('activation_key', $request->activation_key)->first();
+        $activation = Activation::where('activation_key', $request->activation_key)->first(); 
         if($activation->user_id == null){
             $activation->user_id = $user->id;
             $activation->activation_time = Carbon::now();
-            $activation->expiry_date = Carbon::now()->addMonths($activation->course->duration);
+            $activation->expiry_date = $activation->course->device_type == "mobile" ? Carbon::now()->addMonths($activation->course->duration) : NULL ;
+            $activation->expiry_count = $activation->course->device_type == "android_box" ? $activation->course->access_count : NULL ;
+
             $activation->save();
         }else{
             return redirect()->route('users.index')->with('error', 'This activation key is already in use');
@@ -110,15 +117,37 @@ class UserController extends Controller
     }
 
     public function show(User $user){
-        $activations = $user->activation;
-        return view('users.show', compact('user'), compact('activations'));
+        $activations = $user->activation; 
+        $appUsage = AppUsage::where('user_id','=',$user->id)->first();
+        $playedTopics = PlayedTopics::where('user_id','=',$user->id)->get();
+
+        $time = '00:00';
+        if($appUsage){            
+            $minutes = gmdate("i", $appUsage->app_usage_time);
+            $seconds = gmdate("s", $appUsage->app_usage_time);
+            $time = $minutes.':'.$seconds;
+        }
+        $quizAnalytics = QuizAnalytics::where('user_id','=',$user->id)->get();
+
+        return view('users.show', compact('user','activations','time','playedTopics','quizAnalytics'));
     }
 
     public function updateCourseDuration(Request $request, Activation $activation){
 
         if($request->count>0){
-            $course = Course::where(['id'=>$activation->course_id])->first();
-            $course->update(["access_count"=>$request->count]);
+            // $course = Course::where(['id'=>$activation->course_id])->first();
+            // $course->update(["access_count"=>$request->count]);
+            try {
+                // $activation->update([
+                //     'expiry_count' => $request->count
+                // ]);
+                $activation->expiry_count = $request->count;
+                $activation->update();
+            } catch (QueryException $e) {
+                // Handle the exception
+                // For example, you can log the error or return a response to the user
+                dd($e->getMessage());
+            }
             return redirect()->back()->with('success', 'Data updated successfully ..!');
         }
         $expiry_date = Carbon::parse($request->expiry_date);
@@ -140,6 +169,5 @@ class UserController extends Controller
         $user->delete();
         return redirect()->route('users.index')->with('success', 'User deleted successfully');
     }
-
 
 }
