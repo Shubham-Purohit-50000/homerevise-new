@@ -39,10 +39,14 @@ Route::middleware(['auth:sanctum'])->group( function () {
     Route::post('user/get/quiz', [QuizController::class, 'getQuiz']);
     Route::post('user/submit/quiz', [QuizController::class, 'submitQuiz']);
     Route::post('user/get/analytics', [QuizController::class, 'getAnalytics']);
+
+    Route::post('user/update-count', [CourseManagementController::class, 'updateCourseCount']);
     Route::post('user/push-app-analytics', [AnalyticsController::class, 'pushAppAnalytics']);
     Route::get('user/get-app-analytics', [AnalyticsController::class, 'getAppAnalytics']);
     Route::post('user/push-played-topics', [AnalyticsController::class, 'pushPlayedTopics']);
     Route::get('user/get-played-topics', [AnalyticsController::class, 'getPlayedTopics']);
+    Route::post('user/push-quiz-analytics', [AnalyticsController::class, 'pushQuizAnalytics']);
+    Route::get('user/get-quiz-analytics', [AnalyticsController::class, 'getQuizAnalytics']);
 
     
 });

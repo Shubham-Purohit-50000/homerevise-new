@@ -8,7 +8,10 @@ use App\Models\AppUsage;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\User;
 use App\Models\PlayedTopics;
+use App\Models\QuizAnalytics;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+
 
 class AnalyticsController extends BaseController
 {
@@ -41,6 +44,18 @@ class AnalyticsController extends BaseController
 
     public function pushPlayedTopics(Request $request){
         
+        $validator = Validator::make($request->all(), [ 
+            'subject' => 'required',
+            'chapter' => 'required',
+            'topic' => 'required',
+            'duration_minutes' => 'required',
+            'total_topics' => 'required', 
+        ]);
+    
+        // Check if the validation fails
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error', $validator->errors(), 422);
+        }
         $playedTopics = new PlayedTopics;
         $playedTopics->user_id = auth()->user()->id;
         $playedTopics->subject = $request->subject;
@@ -57,5 +72,40 @@ class AnalyticsController extends BaseController
     public function getPlayedTopics(Request $request){
         $playedTopics = PlayedTopics::where('user_id',auth()->user()->id)->latest()->get();
         return $this->sendResponse($playedTopics, 'Played Topics Fetched Successfully.');
+    }
+
+    public function pushQuizAnalytics(Request $request){
+
+        $validator = Validator::make($request->all(), [ 
+            'quiz_name' => 'required',
+            'total_questions' => 'required',
+            'questions_attempted' => 'required',
+            'marks_earned' => 'required',
+            'total_marks' => 'required',
+            'right_questions' => 'required',
+            'wrong_questions' => 'required',
+        ]);
+    
+        // Check if the validation fails
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error', $validator->errors(), 422);
+        }
+        $quizAnalytics = new QuizAnalytics;
+        $quizAnalytics->user_id = auth()->user()->id;
+        $quizAnalytics->subject = $request->subject;
+        $quizAnalytics->quiz_name = $request->quiz_name;
+        $quizAnalytics->total_questions = $request->total_questions;
+        $quizAnalytics->questions_attempted = $request->questions_attempted;
+        $quizAnalytics->marks_earned = $request->marks_earned;
+        $quizAnalytics->total_marks = $request->total_marks;
+        $quizAnalytics->right_questions = $request->right_questions;
+        $quizAnalytics->wrong_questions = $request->wrong_questions;
+        $quizAnalytics->save();
+        $success['status'] = true;
+        return $this->sendResponse($success, 'Quiz Analytics created Successfully.');
+    }
+    public function getQuizAnalytics(Request $request){
+        $quizAnalytics = QuizAnalytics::where('user_id',auth()->user()->id)->latest()->get();
+        return $this->sendResponse($quizAnalytics, 'Quiz Analytics Fetched Successfully.');
     }
 }

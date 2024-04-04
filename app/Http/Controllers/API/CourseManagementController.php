@@ -134,6 +134,20 @@ class CourseManagementController extends BaseController
         return $this->sendResponse($data, 'Prelogin api data.');
     }
 
-
+    public function updateCourseCount(Request $request){
+        $activationCourse = Activation::where('course_id','=',$request->course_id)->where('user_id','=',auth()->user()->id)->first();
+        if ($activationCourse && $activationCourse->expiry_count > 0) {
+            $activationCourse->expiry_count = $activationCourse->expiry_count - 1;
+            $activationCourse->update();
+            $data = [
+                "status"=>True,
+            ];
+            return $this->sendResponse($data, 'Count updated successfully.');
+        }
+        $data = [
+            "status"=>False,
+        ];
+        return $this->sendResponse($data, 'Limit Exceed.');
+    }
 
 }
