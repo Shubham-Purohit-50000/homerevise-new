@@ -195,7 +195,7 @@
 
                                 <div class="form-group">
                                     <label for="scheduler">Schedule Quiz</label>
-                                    <input type="datetime-local" name="scheduler" value="{{$quiz->scheduled_at}}" class="form-control" required>
+                                    <input type="datetime-local" name="scheduler" id="scheduler" value="{{$quiz->scheduled_at}}" class="form-control" required>
                                 </div>
                                 <div class="form-group d-flex align-items-center ">
                                     <label for="is_published" style="margin:0px;">Publish?</label>
@@ -218,6 +218,13 @@
 <script>
     $(document).ready(function() {
 
+        var now = new Date();
+
+        // Format the date and time as required by the datetime-local input
+        var formattedDate = now.toISOString().slice(0, 16);
+
+        // Set the minimum attribute of the input element to the formatted date and time
+        document.getElementById("scheduler").min = formattedDate;
 
         $('.js-example-basic-multiple').select2();
 

@@ -18,7 +18,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::all();
+        $users = User::latest()->get();
         return view('users.index', compact('users'));
     }
 
@@ -45,7 +45,7 @@ class UserController extends Controller
             $activation->user_id = $user->id;
             $activation->activation_time = Carbon::now();
             $activation->expiry_date = Carbon::now();
-            // $activation->save();
+            $activation->save();
         }else{
             return redirect()->route('users.index')->with('error', 'This activation key is already in use, please asign a new key to this user');
         }
