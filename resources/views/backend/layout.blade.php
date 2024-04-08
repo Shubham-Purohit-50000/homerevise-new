@@ -246,7 +246,7 @@
                                     class="hide-menu">Setting</span></a></li>
 
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
-                                href="{{url('admin/gallery')}}" aria-expanded="false"><i class="mdi mdi-folder-multiple-image"></i><span
+                                href="{{url('admin/gallery')}}" aria-expanded="false"><i class="mdi mdi-folder-image"></i><span
                                     class="hide-menu">Gallery</span></a></li>
                                     
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"

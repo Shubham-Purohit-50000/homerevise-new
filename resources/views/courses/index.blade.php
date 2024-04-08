@@ -59,9 +59,9 @@
 {{--                            </div>--}}
 {{--                        </div>--}}
 {{--                        <!-- title -->--}}
-{{--                    </div>--}}
+{{--                    </div>--}} 
                     <div class="table-responsive">
-                        <table class="table v-middle my_table">
+                        <table class=".table v-middle my_table">
                             <thead>
                                 <tr class="bg-light">
                                     <th class="border-top-0">#ID</th>
@@ -83,25 +83,34 @@
                                     @if(isset($item->subject_id))
                                     <td>{{$item->id}}</td>
                                     <td>{{$item->name}}</td>
-{{--                                    {{ dd($item->subjects()->first()->standard->medium) }}--}}
+{{--                                    {{-- dd($item->subjects()->first()->standard->medium) }}--}}
                                     <td>{{optional($item->subjects()->first())->standard->medium->board->state->name }}</td>
                                     <td>{{optional($item->subjects()->first())->standard->medium->board->name ?? ''}}</td>
                                     <td>{{optional($item->subjects()->first())->standard->medium->name ?? ''}}</td>
 
-                                        <td> @foreach($item->subjects()->unique('standard_id') as $subject)
-                                                {{ $subject->standard->name." |" }}
-                                            @endforeach</td>
-                                   <td>@foreach($item->subjects()->unique('id')  as $subject)
-                                           {{ $subject->name." |" }}
-                                   @endforeach</td>
+                                        <td>    @foreach($item->subjects()->unique('standard_id') as $key => $subject)
+                                            {{ $subject->standard->name }}
+                                            @if (!$loop->last) 
+                                                | 
+                                            @endif
+                                        @endforeach</td>
+                                   <td>    @foreach($item->subjects()->unique('id') as $key => $subject)
+                                            {{ $subject->name }}
+                                            @if (!$loop->last) 
+                                                | 
+                                            @endif
+                                        @endforeach</td>
                                     @else(isset($item->standard_id))
                                     <td>{{$item->id}}</td>
                                     <td>{{$item->name}}</td>
                                     <td>{{ optional($item->standards()->first())->medium->board->state->name }}</td>
                                     <td>{{optional($item->standards()->first())->medium->board->name}}</td>
                                     <td>{{optional($item->standards()->first())->medium->name}}</td>
-                                    <td> @foreach($item->standards() as $standard)
-                                             {{ $standard->name." |" }}
+                                    <td>     @foreach($item->standards() as $key => $standard)
+                                        {{ $standard->name }}
+                                        @if (!$loop->last) 
+                                            | 
+                                        @endif
                                     @endforeach</td>
                                   <td>All</td>
                                     @endif

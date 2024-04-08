@@ -172,14 +172,23 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="form-group">
-                                    <label for="scheduler">Schedule Quiz</label>
-                                    <input type="datetime-local" name="scheduler" class="form-control" required>
-                                </div>
+
                                 <div class="form-group d-flex align-items-center ">
-                                    <label for="is_published" style="margin:0px;">Publish?</label>
+                                    <label for="want_to_publish_now" style="margin:0px;">Want to publish now?</label>
                                     <div class="form-check form-switch" style="margin-left:20px;">
-                                        <input class="form-check-input" type="checkbox" id="is_published" name="is_published">
+                                        <input class="form-check-input" type="checkbox" id="want_to_publish_now" name="want_to_publish_now" >
+                                    </div>
+                                </div>
+                                <div id="quiz_scheduling" style="opacity: 1;">
+                                    <div class="form-group">
+                                        <label for="scheduler">Schedule Quiz</label>
+                                        <input type="datetime-local" name="scheduler" id="scheduler" class="form-control" required>
+                                    </div>
+                                    <div class="form-group d-flex align-items-center ">
+                                        <label for="is_published" style="margin:0px;">Publish?</label>
+                                        <div class="form-check form-switch" style="margin-left:20px;">
+                                            <input class="form-check-input" type="checkbox" id="is_published" name="is_published">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -196,6 +205,15 @@
 </div>
 <script>
     $(document).ready(function() {
+
+        var now = new Date();
+
+        // Format the date and time as required by the datetime-local input
+        var formattedDate = now.toISOString().slice(0, 16);
+
+        // Set the minimum attribute of the input element to the formatted date and time
+        document.getElementById("scheduler").min = formattedDate;
+
         $('.js-example-basic-multiple').select2();
 
          $('#quiz_type').on('change', function(){
@@ -235,6 +253,33 @@
             }            
         });
          
+        $('#want_to_publish_now').on('change', function() {
+            var quizScheduling = $("#quiz_scheduling"); // Select the element using jQuery
+            // Check if the radio button is checked and its value is "true" 
+            var checkbox = document.getElementById("is_published");
+
+            if ($(this).is(":checked")) { 
+                    // Get the current date and time
+                var now = new Date();
+                now.setHours(now.getHours() + 5);
+                now.setMinutes(now.getMinutes() + 30);
+                // Format the date and time as required by the datetime-local input
+                var formattedDate = now.toISOString().slice(0,16);
+
+                // Set the value of the input element
+                document.getElementById("scheduler").value = formattedDate;
+
+                // Set the checked property to true
+                checkbox.checked = true;
+                quizScheduling.css("opacity", "0"); // Set opacity to 0
+            } else {
+                quizScheduling.css("opacity", "1"); // Set opacity to 1
+                document.getElementById("scheduler").value = '';
+                // Set the checked property to false
+                checkbox.checked = false;
+            }
+        });
     });
+
 </script>
 @endsection

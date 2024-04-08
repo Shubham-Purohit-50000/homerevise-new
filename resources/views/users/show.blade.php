@@ -39,6 +39,7 @@
             </div>
             <div class="col-7">
                 <div class="text-end upgrade-btn">
+                    <a href="{{url('admin/add/user/key', ['user'=>$user->id])}}"><button class="btn btn-sm btn-success"><span class="mdi mdi-plus"></span> Add Key</button></a> 
                     <a href="{{route('users.edit', ['user'=>$user->id])}}"><button class="btn btn-info"><span class="mdi mdi-pen"></span> Edit</button></a>
                     <a href="{{url('admin/user/deregister/device', ['user'=>$user->id])}}" class="btn btn-danger text-white" onclick="return confirmDelete('Are you sure you want to remove registered device from user account? This action cannot be undone.')">Remove Register Device</a>
                 </div>
