@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Quiz;
 use App\Models\Questions;
+use App\Models\Subject;
+use App\Models\Course;
+use App\Models\Standard;
+use App\Models\Chapter;
 use App\Models\QuizResult;
 use App\Http\Controllers\API\BaseController as BaseController;
 use Illuminate\Support\Str;
@@ -29,6 +33,24 @@ class QuizController extends BaseController
         $quiz = Quiz::all();
         foreach ($course_ids as $course_id) {
             foreach ($quiz as $quizItem) {  
+                if ($quizItem->standard_id) {
+                    $quizItem->standard = Standard::findOrFail($quizItem->standard_id);
+                } 
+                if ($quizItem->subject_id) {
+                    $quizItem->subject = Subject::findOrFail($quizItem->subject_id);
+                    $quizItem->standard = Standard::findOrFail($quizItem->subject->standard_id);
+                } 
+                if ($quizItem->chapter_id) {
+                    $quizItem->chapter = Chapter::findOrFail($quizItem->chapter_id);
+                    $quizItem->subject = Subject::findOrFail($quizItem->chapter->subject_id);
+                    $quizItem->standard = Standard::findOrFail($quizItem->subject->standard_id);
+                }     
+                $courses = [];
+                foreach (json_decode($quizItem->course_id) as $id) { 
+                    $courses[] = Course::findOrFail(intval($id));
+                }
+                $quizItem->courses = $courses;
+                
                 if (in_array($course_id, json_decode($quizItem->course_id))) {
                     $questions = $quizItem->totalQuestions($quizItem->id);
                     $questions = Questions::whereIn('questions.id', $questions)
@@ -46,6 +68,7 @@ class QuizController extends BaseController
                             'questions.correct_answer',
                             'questions.correct_marks',
                             'questions.explanation',
+                            'questions.questionsImage',
                             'standards.id as standard_id',
                             'standards.name as standard_name',
                             'mediums.id as medium_id',
@@ -69,11 +92,11 @@ class QuizController extends BaseController
                     }
         
                     $quizItem->questions = $questions->toArray();
-                    if($quizItem->type == "SWQ"){
-                        $data['Subject_wise_quiz'][] = $quizItem;                
-                    }
                     if($quizItem->type == "STWQ"){
                         $data['Standard_wise_quiz'][] = $quizItem;                
+                    }
+                    if($quizItem->type == "SWQ"){
+                        $data['Subject_wise_quiz'][] = $quizItem;                
                     }
                     if($quizItem->type == "CWQ"){
                         $data['Chapter_wise_quiz'][] = $quizItem;                
