@@ -15,37 +15,73 @@ class QuizController extends BaseController
 {
      public function getQuiz(Request $request){
         $data = [];
-        if($request->course_id){
-            $quiz = Quiz::all();
-            foreach($quiz as $item){
-                if(in_array($request->course_id,json_decode($item->course_id))){
-                    $questions = $item->totalQuestions($item->id);
+        $course_ids = [];
+        if(auth()->user()){
+            $activatedCourses = auth()->user()->activation;
+            if(count($activatedCourses) > 0){
+                foreach($activatedCourses as $item){ 
+                    $course_ids[] = "$item->course_id";
+                }
+            } 
+        }else{
+            return $this->sendError('Unauthorised.', ['error' => 'User is not logedIn'], 401);
+        }
+        $quiz = Quiz::all();
+        foreach ($course_ids as $course_id) {
+            foreach ($quiz as $quizItem) {  
+                if (in_array($course_id, json_decode($quizItem->course_id))) {
+                    $questions = $quizItem->totalQuestions($quizItem->id);
                     $questions = Questions::whereIn('questions.id', $questions)
-                            ->join('standards','standards.id','=','questions.standard_id')
-                            ->join('chapters','chapters.id','=','questions.chapter_id')
-                            ->join('subjects','subjects.id','=','questions.subject_id')
-                            ->join('mediums','mediums.id','=','standards.medium_id')
-                            ->join('boards','boards.id','=','mediums.board_id')
-                            ->join('states','states.id','=','boards.state_id')
-                            ->select('questions.id','questions.question_type','questions.questions','questions.options','questions.correct_answer','questions.correct_marks','questions.explanation','standards.id as standard_id','standards.name as standard_name','mediums.id as medium_id','mediums.name as medium_name','subjects.id as subject_id','subjects.name as subject_name','chapters.id as chapter_id','chapters.name as chapter_name','boards.id as board_id','boards.name as board_name')
-                            ->get();
-		    foreach($questions as $array){
-			$options = json_decode($array->options, true); // Convert JSON to PHP associative array
-			$optionsArray = [];
-			foreach ($options as $key => $value) {
-			    $optionsArray[] = (object) [$key => $value];
-			}
-			$array->options = $optionsArray;
+                        ->join('standards', 'standards.id', '=', 'questions.standard_id')
+                        ->join('chapters', 'chapters.id', '=', 'questions.chapter_id')
+                        ->join('subjects', 'subjects.id', '=', 'questions.subject_id')
+                        ->join('mediums', 'mediums.id', '=', 'standards.medium_id')
+                        ->join('boards', 'boards.id', '=', 'mediums.board_id')
+                        ->join('states', 'states.id', '=', 'boards.state_id')
+                        ->select(
+                            'questions.id',
+                            'questions.question_type',
+                            'questions.questions',
+                            'questions.options',
+                            'questions.correct_answer',
+                            'questions.correct_marks',
+                            'questions.explanation',
+                            'standards.id as standard_id',
+                            'standards.name as standard_name',
+                            'mediums.id as medium_id',
+                            'mediums.name as medium_name',
+                            'subjects.id as subject_id',
+                            'subjects.name as subject_name',
+                            'chapters.id as chapter_id',
+                            'chapters.name as chapter_name',
+                            'boards.id as board_id',
+                            'boards.name as board_name'
+                        )
+                        ->get();
+        
+                    foreach ($questions as $question) {
+                        $options = json_decode($question->options, true);
+                        $optionsArray = [];
+                        foreach ($options as $key => $value) {
+                            $optionsArray[] = (object) [$key => $value];
+                        }
+                        $question->options = $optionsArray;
                     }
-                    $item['questions'] = $questions->toArray();
-                    $data[] = $item;
+        
+                    $quizItem->questions = $questions->toArray();
+                    if($quizItem->type == "SWQ"){
+                        $data['Subject_wise_quiz'][] = $quizItem;                
+                    }
+                    if($quizItem->type == "STWQ"){
+                        $data['Standard_wise_quiz'][] = $quizItem;                
+                    }
+                    if($quizItem->type == "CWQ"){
+                        $data['Chapter_wise_quiz'][] = $quizItem;                
+                    }
                 }
             }
-            return $this->sendResponse($data, 'Data fetched Successfully.');
-
-        }else{
-            return $this->sendError('Unauthorised.', ['error' => 'Course Id is required for fetching the Quiz data.'], 401);
         }
+        return $this->sendResponse($data, 'Data fetched Successfully.');
 
     }
 
