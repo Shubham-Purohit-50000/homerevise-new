@@ -65,7 +65,7 @@
                                 <h4 class="card-title">User Profile</h4>
                             </div>
                             <div id="profile_img my-2">
-                                <img src="http://127.0.0.1:8000/storage/uploads/images/gallery/user.png" alt="" class="rounded-circle shadow" style="width:120px;height:120px;">
+                                <img src="{{asset('storage/uploads/images/gallery/user.png')}}" alt="" class="rounded-circle shadow" style="width:120px;height:120px;">
                             </div>
                             <div>
                             <ul class="list-group list-group-flush">

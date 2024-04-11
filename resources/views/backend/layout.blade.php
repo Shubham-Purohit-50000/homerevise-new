@@ -315,7 +315,17 @@
             return confirm(message);
         }
 
-        let table = new DataTable('.my_table');
+        // let table = new DataTable('.my_table');
+        $('.my_table').DataTable({
+            "order": [[0, "desc"]], // Set the initial sorting order of the first column to descending
+            "columnDefs": [{
+                "targets": [0], // Index of the column you want to modify
+                "orderable": true, // Allow sorting
+                "orderSequence": ["desc", "asc"], // Define the order sequence
+                "className": "sorting_desc", // Add the sorting_desc class
+                "aria-sort": "descending" // Set aria-sort attribute to "descending"
+            }]
+        });
 
     </script>
     <script>
