@@ -121,11 +121,9 @@ class UserController extends Controller
         $appUsage = AppUsage::where('user_id','=',$user->id)->first();
         $playedTopics = PlayedTopics::where('user_id','=',$user->id)->get();
 
-        $time = '00:00';
+        $time = "00:00"; 
         if($appUsage){            
-            $minutes = gmdate("i", $appUsage->app_usage_time);
-            $seconds = gmdate("s", $appUsage->app_usage_time);
-            $time = $minutes.':'.$seconds;
+             $time = $appUsage->app_usage_time ? $appUsage->app_usage_time : "0:0";
         }
         $quizAnalytics = QuizAnalytics::where('user_id','=',$user->id)->get();
 

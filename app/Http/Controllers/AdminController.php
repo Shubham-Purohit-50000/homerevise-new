@@ -15,6 +15,11 @@ class AdminController extends Controller
 {
 
     public function login(){
+
+        if(Auth::guard('admin')->check()){
+
+            return redirect('/admin/dashboard');
+        }
         return view('backend.login');
     }
 
