@@ -114,7 +114,7 @@
                             <a class="nav-link" data-bs-toggle="tab" href="#played_topics" aria-selected="false" tabindex="-1" role="tab">Played Topics Analytics</a>
                         </li> 
                         <li class="nav-item" role="presentation">
-                            <a class="nav-link" data-bs-toggle="tab" href="#quiz_analytics" aria-selected="false" tabindex="-1" role="tab">Played Topics Analytics</a>
+                            <a class="nav-link" data-bs-toggle="tab" href="#quiz_analytics" aria-selected="false" tabindex="-1" role="tab">Quiz Analytics</a>
                         </li> 
                     </ul>
                     <div id="myTabContent" class="tab-content">

@@ -44,27 +44,30 @@ class AnalyticsController extends BaseController
 
     public function pushPlayedTopics(Request $request){
         
-        $validator = Validator::make($request->all(), [ 
-            'subject' => 'required',
-            'chapter' => 'required',
-            'topic' => 'required',
-            'duration_minutes' => 'required',
-            'total_topics' => 'required', 
-        ]);
-    
+        // $validator = Validator::make($request->all(), [ 
+        //     'subject' => 'required',
+        //     'chapter' => 'required',
+        //     'topic' => 'required',
+        //     'duration_minutes' => 'required',
+        //     'total_topics' => 'required', 
+        // ]);
+        $requestData = $request->all();
+ 
         // Check if the validation fails
-        if ($validator->fails()) {
-            return $this->sendError('Validation Error', $validator->errors(), 422);
-        }
-        $playedTopics = new PlayedTopics;
-        $playedTopics->user_id = auth()->user()->id;
-        $playedTopics->subject = $request->subject;
-        $playedTopics->chapter = $request->chapter;
-        $playedTopics->topic = $request->topic;
-        $playedTopics->duration_minutes = $request->duration_minutes;
-        $playedTopics->total_topics = $request->total_topics;
+        // if ($validator->fails()) {
+        //     return $this->sendError('Validation Error', $validator->errors(), 422);
+        // }
+        foreach($requestData as $data){ 
+            $playedTopics = new PlayedTopics;
+            $playedTopics->user_id = auth()->user()->id;
+            $playedTopics->subject = $data['subject'];
+            $playedTopics->chapter = $data['chapter'];
+            $playedTopics->topic = $data['topic'];
+            $playedTopics->duration_minutes = $data['duration_minutes'];
+            $playedTopics->total_topics = $data['total_topics'];
 
-        $playedTopics->save();
+            $playedTopics->save();
+        }
         $success['status'] = true;
         return $this->sendResponse($success, 'Played Topics created Successfully.');
     }
@@ -76,31 +79,37 @@ class AnalyticsController extends BaseController
 
     public function pushQuizAnalytics(Request $request){
 
-        $validator = Validator::make($request->all(), [ 
-            'quiz_name' => 'required',
-            'total_questions' => 'required',
-            'questions_attempted' => 'required',
-            'marks_earned' => 'required',
-            'total_marks' => 'required',
-            'right_questions' => 'required',
-            'wrong_questions' => 'required',
-        ]);
+        // $validator = Validator::make($request->all(), [ 
+        //     'quiz_name' => 'required',
+        //     'total_questions' => 'required',
+        //     'questions_attempted' => 'required',
+        //     'marks_earned' => 'required',
+        //     'total_marks' => 'required',
+        //     'right_questions' => 'required',
+        //     'wrong_questions' => 'required',
+        // ]);
     
-        // Check if the validation fails
-        if ($validator->fails()) {
-            return $this->sendError('Validation Error', $validator->errors(), 422);
+        // // Check if the validation fails
+        // if ($validator->fails()) {
+        //     return $this->sendError('Validation Error', $validator->errors(), 422);
+        // }
+        
+        $requestData = $request->all();
+        foreach($requestData as $data){
+            $quizAnalytics = new QuizAnalytics;
+            $quizAnalytics->user_id = auth()->user()->id;
+            $quizAnalytics->subject = $data['subject'];
+            $quizAnalytics->quiz_name = $data['quiz_name'];
+            $quizAnalytics->total_questions = $data['total_questions'];
+            $quizAnalytics->questions_attempted = $data['questions_attempted'];
+            $quizAnalytics->marks_earned = $data['marks_earned'];
+            $quizAnalytics->total_marks = $data['total_marks'];
+            $quizAnalytics->right_questions = $data['right_questions'];
+            $quizAnalytics->wrong_questions = $data['wrong_questions'];
+            $quizAnalytics->save();
         }
-        $quizAnalytics = new QuizAnalytics;
-        $quizAnalytics->user_id = auth()->user()->id;
-        $quizAnalytics->subject = $request->subject;
-        $quizAnalytics->quiz_name = $request->quiz_name;
-        $quizAnalytics->total_questions = $request->total_questions;
-        $quizAnalytics->questions_attempted = $request->questions_attempted;
-        $quizAnalytics->marks_earned = $request->marks_earned;
-        $quizAnalytics->total_marks = $request->total_marks;
-        $quizAnalytics->right_questions = $request->right_questions;
-        $quizAnalytics->wrong_questions = $request->wrong_questions;
-        $quizAnalytics->save();
+
+
         $success['status'] = true;
         return $this->sendResponse($success, 'Quiz Analytics created Successfully.');
     }
