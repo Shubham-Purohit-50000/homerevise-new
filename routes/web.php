@@ -12,6 +12,7 @@ use App\Http\Controllers\TopicController;
 use App\Http\Controllers\SubtopicController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\StaffController;
 use App\Http\Controllers\WebsiteController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuizController;
@@ -44,6 +45,7 @@ Route::group(['middleware' => 'is_admin', 'prefix' => 'admin'], function () {
     Route::resource('subtopics', SubtopicController::class);
     Route::resource('courses', CourseController::class);
     Route::resource('users', UserController::class);
+    Route::resource('staff', StaffController::class);
     Route::get('add/user/key/{user}', [UserController::class, 'addKey']);
     Route::post('add/user/key/{user}', [UserController::class, 'submitKey']);
     Route::get('courses/create/{type}/{id}', [CourseController::class, 'create']);
