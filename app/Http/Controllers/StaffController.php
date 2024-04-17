@@ -90,4 +90,10 @@ class StaffController extends Controller
     {
         return view('staff.show', compact('staff'));
     }
+
+    public function destroy(Staff $staff)
+    {
+        $staff->delete();
+        return redirect()->route('staff.index')->with('success', 'Staff deleted successfully');
+    }
 }

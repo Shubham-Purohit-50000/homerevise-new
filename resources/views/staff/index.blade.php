@@ -77,7 +77,7 @@
                                     <td> 
                                         <a href="{{route('staff.edit', ['staff'=>$item->id])}}"><button class="btn btn-sm btn-info"><span class="mdi mdi-pen"></span> Edit</button></a>
                                         <a href="{{route('staff.show', ['staff'=>$item->id])}}"><button class="btn btn-sm btn-warning"><span class="mdi mdi-eye"></span> Show</button></a>
-                                        <form action="{{ route('users.destroy', ['user' => $item->id]) }}" method="POST" class="d-inline">
+                                        <form action="{{ route('staff.destroy', ['staff' => $item->id]) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-danger text-white"><span class="mdi mdi-delete-empty"></span> Delete</button>
