@@ -32,7 +32,7 @@
         }
 
         .card{
-        height: 370px;
+        /* height: 370px; */
         margin-top: auto;
         margin-bottom: auto;
         width: 400px;
