@@ -241,9 +241,9 @@
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="{{url('admin/users')}}" aria-expanded="false"><i class="mdi mdi-account"></i><span
                                     class="hide-menu">Users</span></a></li>
-                        <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                        <!-- <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="{{url('admin/staff')}}" aria-expanded="false"><i class="mdi mdi-account"></i><span
-                                    class="hide-menu">Staff</span></a></li>
+                                    class="hide-menu">Staff</span></a></li> -->
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="{{url('admin/setting')}}" aria-expanded="false"><i class="mdi mdi-cog"></i><span
                                     class="hide-menu">Setting</span></a></li>
