@@ -37,6 +37,7 @@ Route::middleware(['auth:sanctum'])->group( function () {
     Route::get('user/logout', [RegisterController::class, 'logout']);
     Route::get('device/de-register', [RegisterController::class, 'de_register_device']);
     Route::post('user/get/quiz', [QuizController::class, 'getQuiz']);
+    Route::post('user/get/old/quiz', [QuizController::class, 'getOldQuizFormate']);
     Route::post('user/submit/quiz', [QuizController::class, 'submitQuiz']);
     Route::post('user/get/analytics', [QuizController::class, 'getAnalytics']);
 
