@@ -63,6 +63,11 @@ Route::group(['middleware' => 'is_admin', 'prefix' => 'admin'], function () {
     Route::post('update/user/course/duration/{activation}', [UserController::class, 'updateCourseDuration']);
     Route::get('user/deregister/device/{user}', [UserController::class, 'deRegisterDevice']);
 
+    Route::get('banner', [AdminController::class, 'banner']);
+    Route::get('create/banner', [AdminController::class, 'create_banner']);
+    Route::post('post/banner', [AdminController::class, 'post_banner']);
+    Route::get('delete/banner/{id}', [AdminController::class, 'delete_banner']);
+
     Route::resource('questions', QuestionController::class);
     Route::resource('quizes', QuizController::class);
     Route::get('quizes/add-questions/{id}', [QuizController::class, 'addQuestions'])->name('quizes.add-questions');

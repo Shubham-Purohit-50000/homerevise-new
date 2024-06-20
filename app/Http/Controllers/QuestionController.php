@@ -11,6 +11,7 @@ use App\Models\Topic;
 use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Storage;
+use Log;
 
 class QuestionController extends Controller
 {
@@ -213,7 +214,7 @@ class QuestionController extends Controller
         }
     }
 
-    public function bulkUpload(Request $request){
+    public function bulkUpload_old(Request $request){
         if($request->all('questionsFile')['questionsFile']){
             if($request->all('questionsFile')['questionsFile']){
                 $file = $request->file('questionsFile');
@@ -231,8 +232,10 @@ class QuestionController extends Controller
                 $result = array_slice($columns, 1);
 
                 if(count($result) > 0){
-
+                    
                     foreach ($result as $column){ 
+                        Log::info('shubham log');
+                        Log::info($column);
                         $question = new Questions; 
                         if (!empty($column[0]) && !empty($column[1]) && !empty($column[2]) && !empty($column[3]) && !empty($column[5]) && !empty($column[6]) && !empty($column[7]) && !empty($column[8])) {
                             $question->question_type = $column[0];
@@ -286,11 +289,78 @@ class QuestionController extends Controller
 
             return redirect()->route('questions.index')
             ->with('success', 'Data Imported Successfully.');
-
         }
 
         return redirect('/admin/questions/import-questions')
         ->with('success', 'Please Select the File.');
+    }
+
+    public function bulkUpload(Request $request)
+    {
+        if ($request->hasFile('questionsFile')) {
+            $file = $request->file('questionsFile');
+            $spreadsheet = IOFactory::load($file->getPathname());
+            $worksheet = $spreadsheet->getActiveSheet();
+            $columns = [];
+
+            foreach ($worksheet->getRowIterator() as $row) {
+                $cellIterator = $row->getCellIterator();
+                $rowData = [];
+
+                foreach ($cellIterator as $cell) {
+                    $rowData[] = $cell->getValue();
+                }
+
+                $columns[] = $rowData;
+            }
+
+            $result = array_slice($columns, 1);
+
+            if (count($result) > 0) {
+                foreach ($result as $column) {
+                    $question = new Questions;
+
+                    if (
+                        !empty($column[0]) && !empty($column[1]) && !empty($column[2]) &&
+                        !empty($column[3]) && !empty($column[5]) &&
+                        !empty($column[7]) && !empty($column[8])
+                    ) {
+                        $question->question_type = $column[0];
+                        $question->standard_id = $column[1];
+                        $question->subject_id = $column[2];
+                        $question->chapter_id = $column[3];
+                        $question->topic_id = $column[4];
+                        $question->questions = $column[5];
+                        $question->questionsImage = $column[6];
+                        $question->correct_answer = $column[7];
+                        $question->correct_marks = $column[8];
+
+                        $options = [];
+                        for ($i = 9, $letter = 'A'; isset($column[$i]); $i++, $letter++) {
+                            // Ensure the current index exists and is not null
+                            if (isset($column[$i])) {
+                                // Process $column[$i] here
+                                $options[$letter] = $column[$i];
+                            }
+                        }
+
+                        $question->options = json_encode($options);
+                        $question->save();
+                    } else {
+                        return redirect()->back()->with('error', 'There is some error in file.');
+                    }
+                }
+
+                return redirect()->route('questions.index')
+                    ->with('success', 'Data Imported Successfully.');
+            } else {
+                return redirect()->route('questions.index')
+                    ->with('error', 'Corrupt Question File Inputs.');
+            }
+        }
+
+        return redirect('/admin/questions/import-questions')
+            ->with('error', 'Please Select the File.');
     }
 
     public function show(){

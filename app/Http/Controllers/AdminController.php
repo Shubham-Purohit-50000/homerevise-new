@@ -7,9 +7,11 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Setting;
+use App\Models\Banner;
 use Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Validator;
 
 class AdminController extends Controller
 {
@@ -255,4 +257,64 @@ class AdminController extends Controller
 
         return response()->json(['message' => 'No file uploaded'], 400);
     }
+
+
+    public function banner()
+    {
+        $banners = Banner::latest()->get();
+        return view('backend.banner', compact('banners'));
+    }
+
+    public function create_banner(){
+        return view('backend.create-banner');
+    }
+
+    public function post_banner(Request $request)
+    {
+        $rules = [
+            'state' => 'required|string|max:100',
+            'data' => 'nullable|string|max:500',
+            'image' => 'required|file|mimes:jpeg,png,jpg,pdf|max:2048',
+        ];
+
+        // Create a validator instance
+        $validator = Validator::make($request->all(), $rules);
+
+        // Check if the validation fails
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        if ($request->hasFile('image')) {
+            // Store the file and get the path
+            $filePath = $request->file('image')->store('states/banners', 'public');
+
+            // Create a new banner with the validated data and file path
+            Banner::create([
+                'state' => $request->state,
+                'data' => $request->data,
+                'image' => $filePath,
+            ]);
+
+            return redirect('admin/banner')->with('success', 'Banner Added Successfully');
+        } else {
+            return back()->withErrors(['error' => 'Bad Request']);
+        }
+    }
+
+    public function delete_banner($id)
+    {
+        // Find the banner by ID
+        $banner = Banner::findOrFail($id);
+
+        // Delete the image file from storage
+        Storage::disk('public')->delete($banner->image);
+
+        // Delete the banner record from the database
+        $banner->delete();
+
+        // Redirect with a success message
+        return redirect('admin/banner')->with('success', 'Banner Deleted Successfully');
+    }
+
 }
