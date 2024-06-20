@@ -251,13 +251,10 @@
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="{{url('admin/gallery')}}" aria-expanded="false"><i class="mdi mdi-folder-image"></i><span
                                     class="hide-menu">Gallery</span></a></li>
-<<<<<<< HEAD
-=======
 
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="{{url('admin/banner')}}" aria-expanded="false"><i class="mdi mdi-folder-image"></i><span
                                     class="hide-menu">Banner</span></a></li>
->>>>>>> 031d756 (bulk question upload and banner)
                                     
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="{{url('admin/tools')}}" aria-expanded="false"><i class="mdi mdi-cogs"></i><span
