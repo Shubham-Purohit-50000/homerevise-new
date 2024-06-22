@@ -12,15 +12,51 @@ use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Storage;
 use App\Jobs\ProcessBulkUpload;
+use Yajra\DataTables\DataTables;
 use Log;
 
 class QuestionController extends Controller
 {
-    public function index(Request $request){
+    public function index_old(Request $request){
 
         $questions = Questions::all();
         return view('questions.index', compact('questions'));
+    }
 
+    public function index(Request $request)
+    {
+        if ($request->ajax()) {
+            $data = Questions::with(['standard', 'subject']);
+
+            if ($request->has('search') && !empty($request->input('search')['value'])) {
+                $searchTerm = $request->input('search')['value'];
+                $data->where(function ($query) use ($searchTerm) {
+                    $query->where('questions', 'like', '%' . $searchTerm . '%');
+                });
+            }
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    return '<div class="d-flex gap-1" >
+                <a href="' . route('questions.edit', ['question' => $row->id]) . '" class="btn btn-sm btn-info">
+                    <span class="mdi mdi-pen"></span> Edit
+                </a>
+                <form action="' . route('questions.destroy', ['question' => $row->id]) . '" method="POST" class="d-inline">
+                    ' . csrf_field() . '
+                    ' . method_field('DELETE') . '
+                    <button type="submit" class="btn btn-sm btn-danger text-white" onclick="return confirmDelete(\'On delete this record, All data such as subtopic, courses and activation_keys etc under this record will be deleted\')">
+                        <span class="mdi mdi-delete-empty"></span> Delete
+                    </button>
+                </form>
+            </div>';
+
+                })
+
+                ->rawColumns(['action'])
+                ->make(true);
+
+        }
+        return view('questions.index');
     }
 
     public function create(){

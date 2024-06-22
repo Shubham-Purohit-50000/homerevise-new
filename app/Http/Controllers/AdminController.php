@@ -272,7 +272,7 @@ class AdminController extends Controller
     public function post_banner(Request $request)
     {
         $rules = [
-            'state' => 'required|string|max:100',
+            'sponsor' => 'required|string|max:100',
             'data' => 'nullable|string|max:500',
             'image' => 'required|file|mimes:jpeg,png,jpg,pdf|max:2048',
         ];
@@ -287,11 +287,11 @@ class AdminController extends Controller
 
         if ($request->hasFile('image')) {
             // Store the file and get the path
-            $filePath = $request->file('image')->store('states/banners', 'public');
+            $filePath = $request->file('image')->store('sponsor/image', 'public');
 
             // Create a new banner with the validated data and file path
             Banner::create([
-                'state' => $request->state,
+                'sponsor' => $request->state,
                 'data' => $request->data,
                 'image' => $filePath,
             ]);

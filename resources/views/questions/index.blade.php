@@ -38,18 +38,8 @@
             <!-- column -->
             <div class="col-12">
                 <div class="card">
-{{--                    <div class="card-body">--}}
-{{--                        <!-- title -->--}}
-{{--                        <div class="d-md-flex">--}}
-{{--                            <div>--}}
-{{--                                <h4 class="card-title">All Questions List</h4>--}}
-{{--                                <h5 class="card-subtitle">Overview of all Questions</h5>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                        <!-- title -->--}}
-{{--                    </div>--}}
                     <div class="table-responsive">
-                        <table class="table v-middle my_table">
+                        <table class="table v-middle" id="questions">
                             <thead>
                                 <tr class="bg-light">
                                     <th class="border-top-0">#ID</th>
@@ -62,27 +52,6 @@
                                     <th class="border-top-0">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                @foreach ($questions as $item)
-                                <tr>
-                                    <td>{{$item->id}}</td>
-                                    <td style="width: 25%;">{!!$item->questions!!}</td>
-                                    <td style="text-align:center;">@if($item->questionsImage)<img src="{{$item->questionsImage}}" width="50px">@else NA @endif</td>
-                                    <td>{{$item->question_type}}</td>
-                                    <td>{{$item->standard->name}}</td>
-                                    <td>{{$item->subject->name}}</td>
-                                    <td>{{$item->correct_marks}}</td>
-                                    <td>
-                                        <a href="{{route('questions.edit', ['question'=>$item->id])}}"><button class="btn btn-sm btn-info"><span class="mdi mdi-pen"></span> Edit</button></a>
-                                        <form action="{{ route('questions.destroy', ['question' => $item->id]) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger text-white" onclick="return confirmDelete('On delete this record, the quiz will be deleted with its assosiate questions.')"><span class="mdi mdi-delete-empty"></span> Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -90,6 +59,32 @@
         </div>
 
     </div>
+    <script>
+      $(document).ready(function() {
 
+          $('#questions').DataTable({
+              processing: true,
+              serverSide: true,
+              ajax: '{!! url('/admin/questions') !!}',
+              paging: true,  // Enable paging
+              pageLength: 25,
+              columns: [
+                  {data: 'id', name: 'id', orderable: true},
+                  {data: 'questions', name: 'questions'},
+                  {data: 'questionsImage', name: 'questionsImage', orderable: false, searchable: false,
+                   render: function(data, type, row) {
+                      return data ? '<img src="' + data + '" width="50px">' : 'NA';
+                   }},
+                  {data: 'question_type', name: 'question_type'},
+                  {data: 'standard.name', name: 'standard.name'},
+                  {data: 'subject.name', name: 'subject.name'},
+                  {data: 'correct_marks', name: 'correct_marks'},
+                  {data: 'action', name: 'action', orderable: false, searchable: false},
+              ],
+
+          });
+      });
+
+    </script>
 </div>
 @endsection

@@ -64,7 +64,7 @@
                             <tr class="bg-light">
                                 <th class="border-top-0">Sponsor ID</th>
                                 <th class="border-top-0" width="200px">Image</th>
-                                <th class="border-top-0" width="200px">State</th>
+                                <th class="border-top-0" width="200px">Sponsor</th>
                                 <th class="border-top-0" width="200px">Data</th>
                                 <th class="border-top-0">Action</th>
                             </tr>
@@ -90,7 +90,7 @@
                                     </div>
                                 </td>
                                 <td><img src="{{ asset('storage/' . $item->image) }}" class="w-100"></td>
-                                <td>{{ $item->state ?? 'Nil' }}</td>
+                                <td>{{ $item->sponsor ?? 'Nil' }}</td>
                                 <td>{{ $item->data ?? 'Nil' }}</td>
                                 <td>
                                     <a href="{{url('admin/delete/banner/' . $item->id)}}" style="font-size:2rem" class="text-danger mdi mdi-delete-circle"></a>

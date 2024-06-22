@@ -40,16 +40,6 @@
             <!-- column -->
             <div class="col-12">
                 <div class="card">
-{{--                    <div class="card-body">--}}
-{{--                        <!-- title -->--}}
-{{--                        <div class="d-md-flex justify-content-between">--}}
-{{--                            <div>--}}
-{{--                                <h4 class="card-title">All Topic List</h4>--}}
-{{--                                <h5 class="card-subtitle">Overview of all topic</h5>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                        <!-- title -->--}}
-{{--                    </div>--}}
                     <div class="table-responsive">
                         <table class="table v-middle" id="topics">
                             <thead>
@@ -94,8 +84,6 @@
 
           });
       });
-
-
 
 </script>
 </div>
