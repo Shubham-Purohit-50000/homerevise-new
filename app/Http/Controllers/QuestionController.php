@@ -11,6 +11,7 @@ use App\Models\Topic;
 use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Storage;
+use App\Jobs\ProcessBulkUpload;
 use Log;
 
 class QuestionController extends Controller
@@ -295,7 +296,7 @@ class QuestionController extends Controller
         ->with('success', 'Please Select the File.');
     }
 
-    public function bulkUpload(Request $request)
+    public function bulkUpload_old_old(Request $request)
     {
         if ($request->hasFile('questionsFile')) {
             $file = $request->file('questionsFile');
@@ -317,6 +318,7 @@ class QuestionController extends Controller
             $result = array_slice($columns, 1);
 
             if (count($result) > 0) {
+                
                 foreach ($result as $column) {
                     $question = new Questions;
 
@@ -361,6 +363,32 @@ class QuestionController extends Controller
 
         return redirect('/admin/questions/import-questions')
             ->with('error', 'Please Select the File.');
+    }
+
+    public function bulkUpload(Request $request)
+    {
+        try {
+            if ($request->hasFile('questionsFile')) {
+                $request->validate([
+                    'questionsFile' => 'required|mimes:xlsx,xls', // Adjust validation rules as per your file types
+                ]);
+
+                // Move the file to a temporary location
+                $file = $request->file('questionsFile');
+                $filePath = $file->store('uploads/temp');
+
+                // Dispatch the job to process the bulk upload
+                ProcessBulkUpload::dispatch($filePath);
+
+                return redirect('/admin/questions/import-questions')->with('success', 'File is being processed in the background.');
+            }
+
+            return redirect('/admin/questions/import-questions')->with('error', 'Please Select the File.');
+        } catch (\Exception $e) {
+            // Log the exception
+            \Log::error('Error uploading file: ' . $e->getMessage());
+            return redirect('/admin/questions/import-questions')->with('error', 'An error occurred while uploading the file.');
+        }
     }
 
     public function show(){

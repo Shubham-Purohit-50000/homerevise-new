@@ -12,6 +12,7 @@ use Exception;
 use App\Models\Activation;
 use Carbon\Carbon;
 use App\Models\Setting;
+use App\Models\Banner;
 
 class CourseManagementController extends BaseController
 {
@@ -148,6 +149,15 @@ class CourseManagementController extends BaseController
             "status"=>False,
         ];
         return $this->sendResponse($data, 'Limit Exceed.');
+    }
+
+
+    public function get_banner(){
+        $data = array();
+        $api_status = Setting::where('setting_option', 'sponsor')->first();
+        $data['api_status'] = $api_status->value;
+        $data['sponsor'] = Banner::latest()->get();
+        return $this->sendResponse($data, 'Active Banners.');
     }
 
 }

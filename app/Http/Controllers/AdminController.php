@@ -317,4 +317,18 @@ class AdminController extends Controller
         return redirect('admin/banner')->with('success', 'Banner Deleted Successfully');
     }
 
+    public function updateSponsorApi(Request $request){
+        
+        $request->validate([
+            'sponsor_api' => 'required|in:active,deactive',
+        ]);
+
+        $sponsor = Setting::where('setting_option', 'sponsor')->first();
+        $sponsor->value = $request->sponsor_api;
+        $sponsor->update();
+
+        return redirect()->back()
+            ->with('success', 'setting updated successfully.');
+    }
+
 }

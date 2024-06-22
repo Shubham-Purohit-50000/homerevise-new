@@ -9,11 +9,11 @@
     <div class="page-breadcrumb">
         <div class="row align-items-center">
             <div class="col-5">
-                <h4 class="page-title">Banner</h4>
+                <h4 class="page-title">Sponsor</h4>
                 <div class="d-flex align-items-center">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#">Banner</a></li>
+                            <li class="breadcrumb-item"><a href="#">Sponsor</a></li>
                             <li class="breadcrumb-item active" aria-current="page">list</li>
                         </ol>
                     </nav>
@@ -21,7 +21,7 @@
             </div>
             <div class="col-7">
                 <div class="text-end upgrade-btn">
-                    <a href="{{url('admin/create/banner')}}" class="btn btn-danger text-white">+ Create Banner</a>
+                    <a href="{{url('admin/create/sponsor')}}" class="btn btn-danger text-white">+ Create Sponsor</a>
                 </div>
             </div>
         </div>
@@ -42,8 +42,8 @@
                     <!-- title -->
                     <div class="d-md-flex">
                         <div>
-                            <h4 class="card-title">All Banner</h4>
-                            <h5 class="card-subtitle">Overview of all banner</h5>
+                            <h4 class="card-title">All Sponsors</h4>
+                            <h5 class="card-subtitle">Overview of all sponsor</h5>
                         </div>
                         <div class="ms-auto d-none">
                             <div class="dl">
@@ -62,8 +62,8 @@
                     <table class="table v-middle">
                         <thead>
                             <tr class="bg-light">
-                                <th class="border-top-0">Banner ID</th>
-                                <th class="border-top-0" width="200px">Banner</th>
+                                <th class="border-top-0">Sponsor ID</th>
+                                <th class="border-top-0" width="200px">Image</th>
                                 <th class="border-top-0" width="200px">State</th>
                                 <th class="border-top-0" width="200px">Data</th>
                                 <th class="border-top-0">Action</th>
@@ -98,7 +98,7 @@
                                 </tr>
                                 @endforeach
                             @else
-                                <h5 class="text-primary text-center">No Banner</h5>
+                                <h5 class="text-primary text-center">No Sponsor</h5>
                             @endif
                         </tbody>
                     </table>

@@ -48,9 +48,10 @@ Route::middleware(['auth:sanctum'])->group( function () {
     Route::get('user/get-played-topics', [AnalyticsController::class, 'getPlayedTopics']);
     Route::post('user/push-quiz-analytics', [AnalyticsController::class, 'pushQuizAnalytics']);
     Route::get('user/get-quiz-analytics', [AnalyticsController::class, 'getQuizAnalytics']);
-
     
 });
+
+Route::get('get/sponsor', [CourseManagementController::class, 'get_banner']);
 
 //for unauthorize user
 Route::get('login', function () {

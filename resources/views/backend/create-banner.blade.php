@@ -21,7 +21,7 @@
                 <div class="d-flex align-items-center">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#">Banner</a></li>
+                            <li class="breadcrumb-item"><a href="#">Sponsor</a></li>
                             <li class="breadcrumb-item active" aria-current="page">Create</li>
                         </ol>
                     </nav>
@@ -42,12 +42,12 @@
             <div class="col-6">
                 <div class="card">
                     <div class="px-4 pb-4">
-                        <h3 class="my-3">Create Banner Form</h3>
-                        <form action="{{url('admin/post/banner')}}" method="post" enctype="multipart/form-data">
+                        <h3 class="my-3">Create Sponsor Form</h3>
+                        <form action="{{url('admin/post/sponsor')}}" method="post" enctype="multipart/form-data">
                             @csrf
                             <div class="form-group">
-                                <label for="date">Date (optional)</label>
-                                <input type="text" name="date" class="form-control">
+                                <label for="data">Data (optional)</label>
+                                <input type="text" name="data" class="form-control">
                             </div>
                             <div class="form-group">
                                 <label for="state">Select State</label>

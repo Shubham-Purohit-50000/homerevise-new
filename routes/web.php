@@ -60,13 +60,14 @@ Route::group(['middleware' => 'is_admin', 'prefix' => 'admin'], function () {
     Route::post('setting/update/apk', [AdminController::class, 'updateApk']);
     Route::post('setting/update/window/apk', [AdminController::class, 'updateWinApk']);
     Route::post('setting/update/tv/apk', [AdminController::class, 'updateTvApk']);
+    Route::post('setting/update/sponsor/api', [AdminController::class, 'updateSponsorApi']);
     Route::post('update/user/course/duration/{activation}', [UserController::class, 'updateCourseDuration']);
     Route::get('user/deregister/device/{user}', [UserController::class, 'deRegisterDevice']);
 
-    Route::get('banner', [AdminController::class, 'banner']);
-    Route::get('create/banner', [AdminController::class, 'create_banner']);
-    Route::post('post/banner', [AdminController::class, 'post_banner']);
-    Route::get('delete/banner/{id}', [AdminController::class, 'delete_banner']);
+    Route::get('sponsor', [AdminController::class, 'banner']);
+    Route::get('create/sponsor', [AdminController::class, 'create_banner']);
+    Route::post('post/sponsor', [AdminController::class, 'post_banner']);
+    Route::get('delete/sponsor/{id}', [AdminController::class, 'delete_banner']);
 
     Route::resource('questions', QuestionController::class);
     Route::resource('quizes', QuizController::class);
@@ -137,3 +138,8 @@ Route::group(['middleware' => 'is_admin', 'prefix' => 'admin'], function () {
 Route::get('privacy-policy', [WebsiteController::class, 'privacy']);
 Route::get('term-condition', [WebsiteController::class, 'term_condition']);
 Route::get('support', [WebsiteController::class, 'support']);
+
+
+Route::get('check', function(){
+    return phpinfo();
+});

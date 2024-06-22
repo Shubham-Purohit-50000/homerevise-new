@@ -253,8 +253,8 @@
                                     class="hide-menu">Gallery</span></a></li>
 
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
-                                href="{{url('admin/banner')}}" aria-expanded="false"><i class="mdi mdi-folder-image"></i><span
-                                    class="hide-menu">Banner</span></a></li>
+                                href="{{url('admin/sponsor')}}" aria-expanded="false"><i class="mdi mdi-account-star-variant"></i><span
+                                    class="hide-menu">Sponsor</span></a></li>
                                     
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="{{url('admin/tools')}}" aria-expanded="false"><i class="mdi mdi-cogs"></i><span

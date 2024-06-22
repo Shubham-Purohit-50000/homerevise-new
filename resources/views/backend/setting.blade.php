@@ -356,6 +356,45 @@
                         </div>
                     </div>
                 </div>
+
+                
+                @if($setting->setting_option == 'sponsor')
+                        <!-- column -->
+                        <div class="col-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <!-- title -->
+                                    <div class="d-md-flex">
+                                        <div>
+                                            <h4 class="card-title">Update Sponsor api</h4>
+                                        </div>
+                                    </div>
+                                    <!-- title -->
+                                </div>
+                                <div class="px-4 pb-4">
+                                    <form action="{{url('admin/setting/update/sponsor/api')}}" method="post">
+                                        @csrf
+                                        <div class="form-group">
+                                        <label for="status">Status
+                                            <span class="{{ $setting->value == 'active' ? 'text-success' : 'text-danger' }}">
+                                                ({{$setting->value}})
+                                            </span>
+                                        </label>
+
+                                            <select name="sponsor_api" id="sponsor_api" class="form-control">
+                                                <option value="active">Active</option>
+                                                <option value="deactive">Deactive</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn btn-success text-white">Submit</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                @endif
+
             </div>
     </div>
 
