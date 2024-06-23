@@ -62,33 +62,18 @@
                     <table class="table v-middle">
                         <thead>
                             <tr class="bg-light">
-                                <th class="border-top-0">Sponsor ID</th>
+                                <th class="border-top-0" width="20px">Sponsor ID</th>
                                 <th class="border-top-0" width="200px">Image</th>
-                                <th class="border-top-0" width="200px">Sponsor</th>
-                                <th class="border-top-0" width="200px">Data</th>
+                                <th class="border-top-0">Sponsor</th>
+                                <th class="border-top-0">Data</th>
                                 <th class="border-top-0">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @php
-                                $btn_colors = array('info','orange','success','purple','danger');
-                            @endphp
                             @if (filled($banners))
                                 @foreach ($banners as $item)
-                                @php
-                                    $rand = rand(0,4);
-                                    $btn_color = $btn_colors[$rand];
-                                @endphp
                                 <tr>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="m-r-10">
-                                            <a class="btn btn-circle d-flex btn-{{$btn_color}} text-white uppercase-text">
-                                                #{{$item->id}}
-                                            </a>
-                                        </div>
-                                    </div>
-                                </td>
+                                <td>#{{$item->id}}</td>
                                 <td><img src="{{ asset('storage/' . $item->image) }}" class="w-100"></td>
                                 <td>{{ $item->sponsor ?? 'Nil' }}</td>
                                 <td>{{ $item->data ?? 'Nil' }}</td>

@@ -52,6 +52,7 @@ Route::middleware(['auth:sanctum'])->group( function () {
 });
 
 Route::get('get/sponsor', [CourseManagementController::class, 'get_banner']);
+Route::post('store/database', [AnalyticsController::class, 'storeDatabase']);
 
 //for unauthorize user
 Route::get('login', function () {

@@ -244,9 +244,6 @@
                         <!-- <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="{{url('admin/staff')}}" aria-expanded="false"><i class="mdi mdi-account"></i><span
                                     class="hide-menu">Staff</span></a></li> -->
-                        <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
-                                href="{{url('admin/setting')}}" aria-expanded="false"><i class="mdi mdi-cog"></i><span
-                                    class="hide-menu">Setting</span></a></li>
 
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="{{url('admin/gallery')}}" aria-expanded="false"><i class="mdi mdi-folder-image"></i><span
@@ -255,6 +252,10 @@
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="{{url('admin/sponsor')}}" aria-expanded="false"><i class="mdi mdi-account-star-variant"></i><span
                                     class="hide-menu">Sponsor</span></a></li>
+                                    
+                        <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                                href="{{url('admin/setting')}}" aria-expanded="false"><i class="mdi mdi-cog"></i><span
+                                    class="hide-menu">Setting</span></a></li>
                                     
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="{{url('admin/tools')}}" aria-expanded="false"><i class="mdi mdi-cogs"></i><span

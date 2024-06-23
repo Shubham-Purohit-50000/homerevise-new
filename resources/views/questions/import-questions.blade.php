@@ -1,26 +1,31 @@
 @extends('backend.layout')
-@section('title','Dashbord')
+@section('title','Dashboard')
 @section('content')
 
 <style>
-    .left-border{
+    .left-border {
         border-left: 3px solid;
     }
-    .info_card h3{
+    .info_card h3 {
         font-size: 1.2rem;
     }
-    #optioncontainer{
+    #optioncontainer {
         padding: 10px;
         border: 2px dashed #cccccc70;
     }
-    .content ul>li{
+    .content ul > li {
         font-size: 16px;
         line-height: 1.5;
         padding-top: 10px;
     }
-    li>p{
+    li > p {
         margin: 0;
-        padding-top:5px;
+        padding-top: 5px;
+    }
+    #progressBar {
+        width: 0;
+        height: 20px;
+        background-color: green;
     }
 </style>
 <div class="page-wrapper">
@@ -44,8 +49,7 @@
             <div class="col-7">
                 <div class="text-end upgrade-btn">
                     <a href="{{url('admin/questions')}}" class="btn btn-danger text-white">Question List</a>
-                    <a href="{{url('/storage/uploads/questionbulkupload.xlsx')}}" class="btn btn-danger text-white">Download Sample </a>
-
+                    <a href="{{url('/storage/uploads/questionbulkupload.xlsx')}}" class="btn btn-danger text-white">Download Sample</a>
                 </div>
             </div>
         </div>
@@ -67,6 +71,7 @@
                     </div>
                     <div class="px-4 pb-4">
                         <h3 class="mb-3">Add Files</h3>
+                        <span class="text-danger">Note: Upload file with maximum 10,000 Questions only</span>
                         <form id="uploadForm" method="POST" enctype="multipart/form-data">
                             @csrf 
                             <div class="form-group" id="correct_answere">
@@ -78,17 +83,17 @@
                                 @error('error')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
-                                @error('error')
-                                    <div><p style="color:red;">{{ $message }}</p></div>
-                                @enderror
-                            </div> 
+                            </div>
                             <div class="form-group">
                                 <button type="submit" class="btn btn-success text-white">Submit</button>
                             </div>
                         </form>
                         <div id="message"></div>
+                        <div class="progress mt-3">
+                            <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                        </div>
 
-                        <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+                        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                         <script>
                             $(document).ready(function() {
                                 $('#uploadForm').on('submit', function(event) {
@@ -105,14 +110,30 @@
                                         headers: {
                                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                                         },
+                                        xhr: function() {
+                                            var xhr = new window.XMLHttpRequest();
+                                            xhr.upload.addEventListener('progress', function(event) {
+                                                if (event.lengthComputable) {
+                                                    var percentComplete = Math.round((event.loaded / event.total) * 100);
+                                                    $('#progressBar').css('width', percentComplete + '%');
+                                                    $('#progressBar').attr('aria-valuenow', percentComplete);
+                                                    $('#progressBar').text(percentComplete + '%');
+                                                }
+                                            }, false);
+                                            return xhr;
+                                        },
                                         success: function(response) {
                                             toastr.success(response.success);
                                             $('#message').html('<div class="alert alert-success">' + response.success + '</div>');
+                                            $('#progressBar').css('width', '0%');
+                                            $('#progressBar').text('0%');
                                         },
                                         error: function(response) {
                                             toastr.error(error);
                                             var error = response.responseJSON.error;
                                             $('#message').html('<div class="alert alert-danger">' + error + '</div>');
+                                            $('#progressBar').css('width', '0%');
+                                            $('#progressBar').text('0%');
                                         }
                                     });
                                 });
@@ -129,14 +150,14 @@
                             <ul>
                                 <li>Please Download the Questions Sample File from the top right corner for better understanding.</li>
                                 <li>In Question Type please follow : <br>
-                                    <p><strong>MSA </strong>for Multiple Choice Single Answere.</p>
+                                    <p><strong>MSA </strong>for Multiple Choice Single Answer.</p>
                                     <p><strong>TOF </strong>for True or False.</p>
                                     <p><strong>FIB </strong>for Fill in the Blanks.</p>
                                     <p><strong>SAQ </strong> for Short Answer Question.</p>
                                 </li>
-                                <li>for adding the image in questions kindly use this formate:- <br>
-                                    &lt;img src=http://homerevise.co/storage/uploads/images/questions/images/imagename.extention> <br>
-                                    Or copy the image url directly from the <a href="/admin/gallery">Gallery Section.</a>
+                                <li>For adding the image in questions kindly use this format:- <br>
+                                    &lt;img src=http://homerevise.co/storage/uploads/images/questions/images/imagename.extension> <br>
+                                    Or copy the image URL directly from the <a href="/admin/gallery">Gallery Section.</a>
                                 </li>
                                 <li>Kindly add all the related fields carefully.</li>
                             </ul>
@@ -147,5 +168,5 @@
         </div>        
     </div>    
 </div>
- 
+
 @endsection

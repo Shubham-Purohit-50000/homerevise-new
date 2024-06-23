@@ -117,4 +117,8 @@ class AnalyticsController extends BaseController
         $quizAnalytics = QuizAnalytics::where('user_id',auth()->user()->id)->latest()->get();
         return $this->sendResponse($quizAnalytics, 'Quiz Analytics Fetched Successfully.');
     }
+
+    public function storeDatabase(Request $request){
+        
+    }
 }

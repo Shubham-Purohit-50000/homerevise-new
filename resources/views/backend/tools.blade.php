@@ -75,6 +75,7 @@
                     <div class="title">
                         HomeRevise Android Application
                     </div>
+                    <span class="btn btn-sm btn-light">{{url('/')}}/storage/uploads/apk/homerevise.apk</span></br>
                     <div class="donwnload-btn">
                         <a href="{{url('/')}}/storage/uploads/apk/homerevise.apk" class="btn btn-primary btn-lg">Download Now</a>
                     </div>
@@ -88,6 +89,7 @@
                     <div class="title">
                         HomeRevise Windows Application
                     </div>
+                    <span class="btn btn-sm btn-light">{{url('/')}}/storage/uploads/apk/homerevise_win.apk</span></br>
                     <div class="donwnload-btn">
                         <a href="{{url('/')}}/storage/uploads/apk/homerevise_win.apk" class="btn btn-primary btn-lg">Download Now</a>
                     </div>
@@ -101,6 +103,7 @@
                     <div class="title">
                         HomeRevise Tv Application
                     </div>
+                    <span class="btn btn-sm btn-light">{{url('/')}}/storage/uploads/apk/homerevise_tv.apk</span></br>
                     <div class="donwnload-btn">
                         <a href="{{url('/')}}/storage/uploads/apk/homerevise_tv.apk" class="btn btn-primary btn-lg">Download Now</a>
                     </div>

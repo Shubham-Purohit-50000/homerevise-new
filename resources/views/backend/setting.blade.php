@@ -366,7 +366,7 @@
                                     <!-- title -->
                                     <div class="d-md-flex">
                                         <div>
-                                            <h4 class="card-title">Update Sponsor api</h4>
+                                            <h4 class="card-title">Change Sponsor Status (Box/TV Splash Screen)</h4>
                                         </div>
                                     </div>
                                     <!-- title -->
@@ -387,7 +387,7 @@
                                             </select>
                                         </div>
                                         <div class="form-group">
-                                            <button type="submit" class="btn btn btn-success text-white">Submit</button>
+                                            <button type="submit" class="btn btn btn-success text-white" onclick="return confirmDelete('Do you really want to change the status of Sponsor splash screen, this will impact on all Box/TV users.')">Submit</button>
                                         </div>
                                     </form>
                                 </div>

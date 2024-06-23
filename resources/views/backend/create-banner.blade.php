@@ -46,16 +46,16 @@
                         <form action="{{url('admin/post/sponsor')}}" method="post" enctype="multipart/form-data">
                             @csrf
                             <div class="form-group">
-                                <label for="data">Data (optional)</label>
-                                <input type="text" name="data" class="form-control">
-                            </div>
-                            <div class="form-group">
                                 <label for="sponsor">Enter Sponsor</label>
                                 <input type="text" name="sponsor" class="form-control">
                             </div>
                             <div class="form-group">
                                 <label for="image">Select Image</label>
                                 <input type="file" name="image" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="data">Data (optional)</label>
+                                <input type="text" name="data" class="form-control">
                             </div>
                             <div class="form-group">
                                 <button type="submit" class="btn btn btn-success text-white">Submit</button>
