@@ -291,12 +291,12 @@ class AdminController extends Controller
 
             // Create a new banner with the validated data and file path
             Banner::create([
-                'sponsor' => $request->state,
+                'sponsor' => $request->sponsor,
                 'data' => $request->data,
                 'image' => $filePath,
             ]);
 
-            return redirect('admin/banner')->with('success', 'Banner Added Successfully');
+            return redirect('admin/sponsor')->with('success', 'Banner Added Successfully');
         } else {
             return back()->withErrors(['error' => 'Bad Request']);
         }
@@ -314,7 +314,7 @@ class AdminController extends Controller
         $banner->delete();
 
         // Redirect with a success message
-        return redirect('admin/banner')->with('success', 'Banner Deleted Successfully');
+        return back()->with('success', 'Banner Deleted Successfully');
     }
 
     public function updateSponsorApi(Request $request){

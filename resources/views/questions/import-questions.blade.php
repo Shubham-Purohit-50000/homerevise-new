@@ -67,33 +67,57 @@
                     </div>
                     <div class="px-4 pb-4">
                         <h3 class="mb-3">Add Files</h3>
-                        <form action="{{url('admin/questions/bulk-upload')}}" method="POST" enctype="multipart/form-data">
+                        <form id="uploadForm" method="POST" enctype="multipart/form-data">
                             @csrf 
                             <div class="form-group" id="correct_answere">
                                 <label for="correct_ans">Add Question File</label>
-                                <input type="file" name="questionsFile" class="form-control" accept=".xls,.xlsx, .ods">
+                                <input type="file" name="questionsFile" class="form-control" accept=".xls,.xlsx,.ods">
                                 @error('questionsFile')
                                     <span class="text-danger">Please select question file.</span>
                                 @enderror
                                 @error('error')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
-
                                 @error('error')
                                     <div><p style="color:red;">{{ $message }}</p></div>
                                 @enderror
                             </div> 
-                            {{--<div class="form-group" id="imageFile">
-                                <label for="correct_ans">Add Image File</label>
-                                <input type="file" name="imageFile" class="form-control" accept=".zip">
-                                @error('questionsFile')
-                                    <span class="text-danger">Please select question file.</span>
-                                @enderror
-                            </div> --}}
                             <div class="form-group">
-                                <button type="submit" class="btn btn btn-success text-white">Submit</button>
+                                <button type="submit" class="btn btn-success text-white">Submit</button>
                             </div>
                         </form>
+                        <div id="message"></div>
+
+                        <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+                        <script>
+                            $(document).ready(function() {
+                                $('#uploadForm').on('submit', function(event) {
+                                    event.preventDefault();
+
+                                    var formData = new FormData(this);
+
+                                    $.ajax({
+                                        url: '{{ url("admin/questions/bulk-upload") }}',
+                                        method: 'POST',
+                                        data: formData,
+                                        contentType: false,
+                                        processData: false,
+                                        headers: {
+                                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                        },
+                                        success: function(response) {
+                                            toastr.success(response.success);
+                                            $('#message').html('<div class="alert alert-success">' + response.success + '</div>');
+                                        },
+                                        error: function(response) {
+                                            toastr.error(error);
+                                            var error = response.responseJSON.error;
+                                            $('#message').html('<div class="alert alert-danger">' + error + '</div>');
+                                        }
+                                    });
+                                });
+                            });
+                        </script>
                     </div>
                 </div>
             </div>

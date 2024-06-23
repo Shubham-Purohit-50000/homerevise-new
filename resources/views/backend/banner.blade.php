@@ -93,7 +93,7 @@
                                 <td>{{ $item->sponsor ?? 'Nil' }}</td>
                                 <td>{{ $item->data ?? 'Nil' }}</td>
                                 <td>
-                                    <a href="{{url('admin/delete/banner/' . $item->id)}}" style="font-size:2rem" class="text-danger mdi mdi-delete-circle"></a>
+                                    <a href="{{url('admin/delete/sponsor/' . $item->id)}}" style="font-size:2rem" class="text-danger mdi mdi-delete-circle"></a>
                                 </td>
                                 </tr>
                                 @endforeach

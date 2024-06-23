@@ -406,7 +406,7 @@ class QuestionController extends Controller
         try {
             if ($request->hasFile('questionsFile')) {
                 $request->validate([
-                    'questionsFile' => 'required|mimes:xlsx,xls', // Adjust validation rules as per your file types
+                    'questionsFile' => 'required|mimes:xlsx,xls,ods', // Adjust validation rules as per your file types
                 ]);
 
                 // Move the file to a temporary location
@@ -416,16 +416,21 @@ class QuestionController extends Controller
                 // Dispatch the job to process the bulk upload
                 ProcessBulkUpload::dispatch($filePath);
 
-                return redirect('/admin/questions/import-questions')->with('success', 'File is being processed in the background.');
+                // Return JSON response for AJAX request
+                return response()->json(['success' => 'File is being processed in the background.'], 200);
             }
 
-            return redirect('/admin/questions/import-questions')->with('error', 'Please Select the File.');
+            // Return error response for AJAX request
+            return response()->json(['error' => 'Please select a file.'], 400);
         } catch (\Exception $e) {
             // Log the exception
             \Log::error('Error uploading file: ' . $e->getMessage());
-            return redirect('/admin/questions/import-questions')->with('error', 'An error occurred while uploading the file.');
+
+            // Return error response for AJAX request
+            return response()->json(['error' => 'An error occurred while uploading the file.'], 500);
         }
     }
+
 
     public function show(){
         return view('questions.import-questions');
