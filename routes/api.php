@@ -16,6 +16,29 @@ use App\Http\Controllers\API\AnalyticsController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::post('store/database/check', function(Request $request) {
+    $request->validate([
+        'database' => 'required|string',
+        'database_url' => 'required|mimes:txt'
+    ]);
+
+    if ($request->hasFile('database_url')) {
+        // Store the file and get the path
+        $filePath = $request->file('database_url')->store('user/database', 'public');
+
+        // Parse the JSON data
+        $data = [
+            'json' => $request->database,
+            'file_path' => $filePath
+        ];
+
+        $dat = json_encode($data);
+
+        return $this->sendResponse($data, 'Data Updated Successfully.');
+    } else {
+        return $this->sendResponse([], 'No file uploaded.', 400);
+    }
+});
 
 Route::get('pre-login/details', [CourseManagementController::class, 'prelogin']);
 

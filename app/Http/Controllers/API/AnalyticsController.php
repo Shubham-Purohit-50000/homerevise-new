@@ -118,7 +118,33 @@ class AnalyticsController extends BaseController
         return $this->sendResponse($quizAnalytics, 'Quiz Analytics Fetched Successfully.');
     }
 
-    public function storeDatabase(Request $request){
-        
+    public function storeDatabase(Request $request) {
+        $request->validate([
+            'database' => 'required|string',
+            'database_url' => 'required|mimes:txt'
+        ]);
+    
+        $user = auth()->user();
+    
+        if ($request->hasFile('database_url')) {
+            // Store the file and get the path
+            $filePath = $request->file('database_url')->store('user/database', 'public');
+    
+            // Parse the JSON data
+            $data = [
+                'json' => $request->database,
+                'file_path' => $filePath
+            ];
+    
+            // Update the user's database field
+            $user->update([
+                'database' => json_encode($data),
+            ]);
+    
+            return $this->sendResponse($data, 'Data Updated Successfully.');
+        } else {
+            return $this->sendResponse([], 'No file uploaded.', 400);
+        }
     }
+    
 }
