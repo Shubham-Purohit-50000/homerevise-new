@@ -250,7 +250,6 @@
                         </div> 
                         </div> 
                         <div class="tab-pane fade" id="played_topics" role="tabpanel">
-                            
                             <div class="card-body">
                                 <!-- title -->
                                 <div class="d-md-flex">
@@ -272,15 +271,19 @@
                                             </tr>
                                         </thead> 
                                         <tbody>
-                                            @if(count($playedTopics)>0)
-                                                @foreach($playedTopics as $index=>$item)
+                                            @if(filled($user->database))
+                                                @php
+                                                    $json = json_decode($user->database)->json;
+                                                    $played_topics = json_decode($json)->played_topics;
+                                                @endphp
+                                                @foreach($played_topics as $item)
                                                 <tr class="bg-light">
-                                                    <td> {{$index+1}}</td>
+                                                    <td> {{$item->id}}</td>
                                                     <td> {{$item->subject}}</td>
                                                     <td> {{$item->chapter}}</td>
                                                     <td> {{$item->topic}}</td>
                                                     <td> {{$item->duration_minutes}}</td>
-                                                    <td> {{$item->total_topics}}</td> 
+                                                    <td> {{$item->total_topics}}</td>
                                                 </tr>
                                                 @endforeach
                                                 @else
@@ -308,7 +311,7 @@
                                         <thead>
                                             <tr class="bg-light">
                                                 <th class="border-top-0">Sr.No</th>
-                                                <th class="border-top-0">Subject</th>
+                                                <!-- <th class="border-top-0">Subject</th> -->
                                                 <th class="border-top-0">Quiz Name</th>
                                                 <th class="border-top-0">Total Questions</th>
                                                 <th class="border-top-0">Questions Attempted</th>
@@ -320,19 +323,22 @@
                                             </tr>
                                         </thead> 
                                         <tbody>
-                                            @if(count($quizAnalytics)>0)
-                                                @foreach($quizAnalytics as $index=>$item) 
+                                        @if(filled($user->database))
+                                                @php
+                                                    $json = json_decode($user->database)->json;
+                                                    $quiz_analytics = json_decode($json)->quiz_analytics;
+                                                @endphp 
+                                                @foreach($quiz_analytics as $item)
                                                 <tr >
-                                                    <td> {{$index+1}}</td>
-                                                    <td> {{($item->subject || $item->subject == "null") ? "NA"  : $item->subject}}</td>
+                                                    <td> {{$item->id}}</td>
                                                     <td> {{$item->quiz_name}}</td>
                                                     <td> {{$item->total_questions}}</td>
                                                     <td> {{$item->questions_attempted}}</td>
-                                                    <td> {{$item->marks_earned}}</td> 
-                                                    <td> {{$item->total_marks}}</td> 
+                                                    <td> {{$item->marks_earned}}</td>
+                                                    <td> {{$item->total_marks}}</td>
                                                     <td> {{$item->right_questions}}</td> 
-                                                    <td> {{$item->wrong_questions}}</td> 
-                                                    <td> {{$item->created_at}}</td>  
+                                                    <td> {{$item->wrong_questions}}</td>
+                                                    <td> {{ date('Y-m-d H:i:s', $item->date / 1000) }} </td>
                                                 </tr>
                                                 @endforeach
                                                 @else

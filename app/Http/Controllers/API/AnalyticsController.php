@@ -118,25 +118,52 @@ class AnalyticsController extends BaseController
         return $this->sendResponse($quizAnalytics, 'Quiz Analytics Fetched Successfully.');
     }
 
+
     public function storeDatabase(Request $request) {
-        $request->validate([
+        $rules = [
             'database' => 'required|string',
-            'database_url' => 'required|mimes:txt'
-        ]);
+            'database_url' => 'required|file'
+        ];
+    
+        $validator = Validator::make($request->all(), $rules);
+    
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation Error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
     
         $user = auth()->user();
     
         if ($request->hasFile('database_url')) {
-            // Store the file and get the path
-            $filePath = $request->file('database_url')->store('user/database', 'public');
+            $file = $request->file('database_url');
     
-            // Parse the JSON data
+            // Check if the file is valid
+            if (!$file->isValid()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid file upload.'
+                ], 400);
+            }
+    
+            // Check if the file has content
+            if ($file->getSize() == 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'File is empty.'
+                ], 400);
+            }
+    
+            // Store the file
+            $filePath = $file->store('user/database', 'public');
+    
             $data = [
                 'json' => $request->database,
                 'file_path' => $filePath
             ];
     
-            // Update the user's database field
             $user->update([
                 'database' => json_encode($data),
             ]);
@@ -146,5 +173,8 @@ class AnalyticsController extends BaseController
             return $this->sendResponse([], 'No file uploaded.', 400);
         }
     }
+    
+
+    
     
 }

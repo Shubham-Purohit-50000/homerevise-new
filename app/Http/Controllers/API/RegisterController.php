@@ -112,6 +112,13 @@ class RegisterController extends BaseController
     
             $success['token'] =  $user->createToken('MyApp')->plainTextToken;
             $success['user_data'] =  $user;
+            if(filled($user->database)){
+                $user->database_url = json_decode($user->database)->file_path;
+            }
+            else{
+                $user->database_url = null;
+            }
+            
             return $this->sendResponse($success, 'User login successfully.');
         }
     
