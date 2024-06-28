@@ -116,6 +116,11 @@
                         <li class="nav-item" role="presentation">
                             <a class="nav-link" data-bs-toggle="tab" href="#quiz_analytics" aria-selected="false" tabindex="-1" role="tab">Quiz Analytics</a>
                         </li> 
+                        @if(filled($user->database))
+                        <li class="nav-item" role="presentation">
+                            <a href="{{ url('admin/download-report/' . $user->id) }}" class="btn btn-primary">Download Report</a>
+                        </li>
+                        @endif
                     </ul>
                     <div id="myTabContent" class="tab-content">
                         <div class="tab-pane fade show active" id="user_courses" role="tabpanel">

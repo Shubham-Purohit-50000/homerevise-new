@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Validator;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 class AdminController extends Controller
 {
 
@@ -331,4 +334,111 @@ class AdminController extends Controller
             ->with('success', 'setting updated successfully.');
     }
 
-}
+
+    public function downloadReport($id)
+    {
+        $user = User::findOrFail($id);
+        $json = json_decode($user->database)->json;
+
+        $data = json_decode($json, true);
+
+        $spreadsheet = new Spreadsheet();
+
+        // Populate played_topics sheet
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Played Topics');
+
+        $headers = ['ID', 'Subject', 'Chapter', 'Topic', 'Duration (minutes)', 'Total Topics', 'Date'];
+        $sheet->fromArray($headers, NULL, 'A1');
+
+        // Set header font style to bold
+        $styleArray = [
+            'font' => [
+                'bold' => true,
+            ],
+        ];
+        $sheet->getStyle('A1:G1')->applyFromArray($styleArray);
+
+        $row = 2;
+        foreach ($data['played_topics'] as $played_topic) {
+            $sheet->setCellValue('A' . $row, $played_topic['id']);
+            $sheet->setCellValue('B' . $row, $played_topic['subject']);
+            $sheet->setCellValue('C' . $row, $played_topic['chapter']);
+            $sheet->setCellValue('D' . $row, $played_topic['topic']);
+            $sheet->setCellValue('E' . $row, $played_topic['duration_minutes']);
+            $sheet->setCellValue('F' . $row, $played_topic['total_topics']);
+            $sheet->setCellValue('G' . $row, date('Y-m-d H:i:s', $played_topic['date'] / 1000));
+            $row++;
+        }
+
+        // Create quiz_analytics sheet
+        $spreadsheet->createSheet();
+        $spreadsheet->setActiveSheetIndex(1);
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Quiz Analytics');
+
+        $headers = ['ID', 'Quiz Name', 'Total Questions', 'Questions Attempted', 'Marks Earned', 'Total Marks', 'Right Questions', 'Wrong Questions', 'Date'];
+        $sheet->fromArray($headers, NULL, 'A1');
+
+        // Set header font style to bold
+        $styleArray = [
+            'font' => [
+                'bold' => true,
+            ],
+        ];
+        $sheet->getStyle('A1:I1')->applyFromArray($styleArray);
+
+        $row = 2;
+        foreach ($data['quiz_analytics'] as $quiz_analytic) {
+            $sheet->setCellValue('A' . $row, $quiz_analytic['id']);
+            $sheet->setCellValue('B' . $row, $quiz_analytic['quiz_name']);
+            $sheet->setCellValue('C' . $row, $quiz_analytic['total_questions']);
+            $sheet->setCellValue('D' . $row, $quiz_analytic['questions_attempted']);
+            $sheet->setCellValue('E' . $row, $quiz_analytic['marks_earned']);
+            $sheet->setCellValue('F' . $row, $quiz_analytic['total_marks']);
+            $sheet->setCellValue('G' . $row, $quiz_analytic['right_questions']);
+            $sheet->setCellValue('H' . $row, $quiz_analytic['wrong_questions']);
+            $sheet->setCellValue('I' . $row, date('Y-m-d H:i:s', $quiz_analytic['date'] / 1000));
+            $row++;
+        }
+
+        // Create daily_time sheet
+        $spreadsheet->createSheet();
+        $spreadsheet->setActiveSheetIndex(2);
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Daily Time');
+
+        $headers = ['Subject', 'Topic', 'Chapter', 'Date', 'Duration (minutes)'];
+        $sheet->fromArray($headers, NULL, 'A1');
+
+        // Set header font style to bold
+        $styleArray = [
+            'font' => [
+                'bold' => true,
+            ],
+        ];
+        $sheet->getStyle('A1:F1')->applyFromArray($styleArray);
+
+        $row = 2;
+        foreach ($data['daily_time'] as $daily_time) {
+            $sheet->setCellValue('A' . $row, $daily_time['subject']);
+            $sheet->setCellValue('B' . $row, $daily_time['topic']);
+            $sheet->setCellValue('C' . $row, $daily_time['chapter']);
+            $sheet->setCellValue('D' . $row, date('Y-m-d H:i:s', $daily_time['date'] / 1000));
+            $sheet->setCellValue('E' . $row, $daily_time['duration_minutes']);
+            $row++;
+        }
+
+        // Set the first sheet as the active sheet
+        $spreadsheet->setActiveSheetIndex(0);
+
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'Analytics_report.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+
+        $writer->save($temp_file);
+
+        return response()->download($temp_file, $fileName)->deleteFileAfterSend(true);
+    }
+
+   }

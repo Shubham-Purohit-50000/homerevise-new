@@ -17,6 +17,7 @@ use App\Http\Controllers\WebsiteController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\GalleryController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -133,6 +134,8 @@ Route::group(['middleware' => 'is_admin', 'prefix' => 'admin'], function () {
     Route::get('gallery/edit/{id}', [GalleryController::class, 'edit'])->name('gallery.edit');
     Route::post('gallery/update', [GalleryController::class, 'update'])->name('gallery.update');
     Route::post('gallery/destroy', [GalleryController::class, 'destroy'])->name('gallery.destroy');
+
+    Route::get('/download-report/{user_id}', [AdminController::class, 'downloadReport']);
 });
 
 Route::get('privacy-policy', [WebsiteController::class, 'privacy']);

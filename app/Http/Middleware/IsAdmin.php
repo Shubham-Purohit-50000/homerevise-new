@@ -17,13 +17,18 @@ class IsAdmin
      */
     public function handle(Request $request, Closure $next)
     {
-        if(Auth::guard('admin')->check()){
-//            return $next($request);
+        if (Auth::guard('admin')->check()) {
             $response = $next($request);
-            return $response->header('Cache-Control','no-cache, no-store, max-age=0, must-revalidate')
-                ->header('Pragma','no-cache')
-                ->header('Expires','Sun, 02 Jan 1990 00:00:00 GMT');
-        }else{
+
+            // Check if the response is a BinaryFileResponse or a FileResponse
+            if (method_exists($response, 'headers')) {
+                $response->headers->set('Cache-Control', 'no-cache, no-store, max-age=0, must-revalidate');
+                $response->headers->set('Pragma', 'no-cache');
+                $response->headers->set('Expires', 'Sun, 02 Jan 1990 00:00:00 GMT');
+            }
+
+            return $response;
+        } else {
             return redirect('/');
         }
     }

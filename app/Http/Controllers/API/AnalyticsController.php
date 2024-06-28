@@ -174,7 +174,5 @@ class AnalyticsController extends BaseController
         }
     }
     
-
-    
     
 }
