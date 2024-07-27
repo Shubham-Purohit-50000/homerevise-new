@@ -32,11 +32,16 @@ class QuizController extends Controller
             'quiz_type' => 'required',
             'quiz_desc' => 'required',
             'total_quiz_time' => 'required',
-            'courses' => 'required',
+            // 'courses' => 'required',
             'quiz_standard' => 'required_if:quiz_type,STWQ',
             'quiz_subject' => 'required_if:quiz_type,SWQ',
             'quiz_chapter' => 'required_if:quiz_type,CWQ',
         ]);
+
+        if($request->quiz_type == 'STWQ'){
+            // yha se hum vo sare courses pic krlenge jisme ye standard_id store
+        }
+
         $quiz = new Quiz;
         $quiz->title = $request->quiz_title;
         $quiz->type = $request->quiz_type;
@@ -51,9 +56,9 @@ class QuizController extends Controller
         $quiz->total_quiz_time = $request->total_quiz_time;
         $quiz->scheduled_at = $request->scheduler;
         $quiz->is_published = ($request->is_published == "on") ? 1 : 0;
-        if($request->courses && count($request->courses) > 0){
-            $quiz->course_id = json_encode($request->courses,true);
-        }
+        // if($request->courses && count($request->courses) > 0){
+        //     $quiz->course_id = json_encode($request->courses,true);
+        // }
         $quiz->save();
         return redirect()->route('quizes.add-questions', ['id' => $quiz->id])
                 ->with('success', 'Quiz created successfully');
@@ -75,7 +80,7 @@ class QuizController extends Controller
             'quiz_type' => 'required',
             'quiz_desc' => 'required',
             'total_quiz_time' => 'required',
-            'courses' => 'required',
+            // 'courses' => 'required',
             'quiz_standard' => 'required_if:quiz_type,STWQ',
             'quiz_subject' => 'required_if:quiz_type,SWQ',
             'quiz_chapter' => 'required_if:quiz_type,CWQ',
@@ -95,9 +100,9 @@ class QuizController extends Controller
         $quiz->scheduled_at = $request->scheduler;
         $quiz->is_published = ($request->is_published == "on") ? 1 : 0;
 
-        if(count($request->courses) > 0){
-            $quiz->course_id = json_encode($request->courses,true);
-        }
+        // if(count($request->courses) > 0){
+        //     $quiz->course_id = json_encode($request->courses,true);
+        // }
         $quiz->save();
         return redirect()->route('quizes.index', ['id' => $quiz->id])
                 ->with('success', 'Quiz Updated successfully');

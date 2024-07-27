@@ -36,4 +36,19 @@ class Quiz extends Model
         }
         return $count;
     }
+
+    public function subject()
+    {
+        return $this->belongsTo(Subject::class);
+    }
+
+    public function standard()
+    {
+        return $this->belongsTo(Standard::class);
+    }
+
+    public function chapter()
+    {
+        return $this->belongsTo(Chapter::class);
+    }
 }

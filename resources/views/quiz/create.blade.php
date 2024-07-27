@@ -164,7 +164,7 @@
                                     <label for="total_quiz_time">Total Quiz Time <small class="text-muted">(In Minuts)</small></label>
                                     <input type="number" name="total_quiz_time" class="form-control" required>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group d-none">
                                     <label for="total_quiz_time">Add to Course</label>
                                     <select class="js-example-basic-multiple form-control" name="courses[]" multiple="multiple" >
                                         @foreach($courses as $item)

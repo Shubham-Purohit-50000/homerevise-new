@@ -175,7 +175,7 @@
                                 </div>
                                 
                                 
-                                <div class="form-group">
+                                <div class="form-group d-none">
                                     <label for="total_quiz_time">Add to Course</label>
                                     <select class="js-example-basic-multiple form-control" name="courses[]" multiple="multiple" >
                                         @if($quiz->course_id != "null") 
