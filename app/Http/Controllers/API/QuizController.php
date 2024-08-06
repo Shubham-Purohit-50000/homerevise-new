@@ -236,7 +236,7 @@ class QuizController extends BaseController
 
     }
 
-    public function getOldQuizFormate(Request $request){
+    public function getOldQuizFormate_old(Request $request){
         $course_ids = [];
         $data = [];
         if(auth()->user()){
@@ -249,38 +249,7 @@ class QuizController extends BaseController
         }else{
             return $this->sendError('Unauthorised.', ['error' => 'User is not logedIn'], 401);
         }
-        // if(count($course_ids) > 0){ 
-        //     $quiz = Quiz::all();
-        //     foreach($course_ids as $id){
-        //         foreach($quiz as $item){   
-        //             if(in_array($id,json_decode($item->course_id))){ 
-        //                 $questions = $item->totalQuestions($item->id);
-        //                 $questions = Questions::whereIn('questions.id', $questions)
-        //                 ->join('standards','standards.id','=','questions.standard_id')
-        //                         ->join('chapters','chapters.id','=','questions.chapter_id')
-        //                         ->join('subjects','subjects.id','=','questions.subject_id')
-        //                         ->join('mediums','mediums.id','=','standards.medium_id')
-        //                         ->join('boards','boards.id','=','mediums.board_id')
-        //                         ->join('states','states.id','=','boards.state_id')
-        //                         ->select('questions.id','questions.question_type','questions.questions','questions.options','questions.correct_answer','questions.correct_marks','questions.explanation','standards.id as standard_id','standards.name as standard_name','mediums.id as medium_id','mediums.name as medium_name','subjects.id as subject_id','subjects.name as subject_name','chapters.id as chapter_id','chapters.name as chapter_name','boards.id as board_id','boards.name as board_name')
-        //                         ->get();
-        //                 foreach($questions as $array){
-        //                     $options = json_decode($array->options, true); // Convert JSON to PHP associative array
-        //                     $optionsArray = [];
-        //                     foreach ($options as $key => $value) {
-        //                         $optionsArray[] = (object) [$key => $value];
-        //                     }
-        //                     $array->options = $optionsArray;
-        //                 }
-        //                     $item['questions'] = $questions->toArray();
-        //                     $data[] = $item;
-        //             } 
-        //         }
-        //         return $this->sendResponse($data, 'Data fetched Successfully.');
-        //     } 
-        // }else{
-        //     return $this->sendError('Unauthorised.', ['error' => 'Course Id is required for fetching the Quiz data.'], 401);
-        // }
+    
         if (empty($course_ids)) {
             return $this->sendError('Bad Request.', ['error' => 'Course Id is required for fetching the Quiz data.'], 400);
         }
@@ -319,6 +288,129 @@ class QuizController extends BaseController
         // dd($data);
         return $this->sendResponse($data, 'Data fetched Successfully.');
     }
+
+    public function getOldQuizFormate(Request $request)
+    {
+        $data = [];
+        $course_ids = [];
+        
+        // Check if user is authenticated
+        if (auth()->user()) {
+            $activatedCourses = auth()->user()->activation;
+            if (count($activatedCourses) > 0) {
+                foreach ($activatedCourses as $item) {
+                    $course_ids[] = (string)$item->course_id;
+                }
+            }
+        } else {
+            return $this->sendError('Unauthorised.', ['error' => 'User is not loggedIn'], 401);
+        }
+
+        if (empty($course_ids)) {
+            return $this->sendError('Bad Request.', ['error' => 'Course Id is required for fetching the Quiz data.'], 400);
+        }
+
+        $quizzes = Quiz::all();
+
+        foreach ($course_ids as $course_id) {
+            foreach ($quizzes as $quizItem) {
+                $quiz_flag = false;
+
+                if ($quizItem->standard_id) {
+                    $quizStandardId = (string) $quizItem->standard_id;
+                    $check = Course::where('id', $course_id)->whereJsonContains('standard_id', $quizStandardId)->exists();
+                    if ($check) {
+                        $quiz_flag = true;
+                        $quizItem->standard = Standard::findOrFail($quizItem->standard_id);
+                    }
+                }
+
+                if ($quizItem->subject_id) {
+                    $quizSubjectId = (string) $quizItem->subject_id;
+                    $check = Course::where('id', $course_id)->whereJsonContains('subject_id', $quizSubjectId)->exists();
+                    if ($check) {
+                        $quiz_flag = true;
+                        $quizItem->subject = Subject::findOrFail($quizItem->subject_id);
+                        $quizItem->standard = Standard::findOrFail($quizItem->subject->standard_id);
+                    } else {
+                        $check = Course::where('id', $course_id)->whereJsonContains('standard_id', (string) $quizItem->subject->standard_id)->exists();
+                        if ($check) {
+                            $quiz_flag = true;
+                            $quizItem->subject = Subject::findOrFail($quizItem->subject_id);
+                            $quizItem->standard = Standard::findOrFail($quizItem->subject->standard_id);
+                        }
+                    }
+                }
+
+                if ($quizItem->chapter_id) {
+                    $quizSubjectId = (string) $quizItem->chapter->subject_id;
+                    $check = Course::where('id', $course_id)->whereJsonContains('subject_id', $quizSubjectId)->exists();
+                    if ($check) {
+                        $quiz_flag = true;
+                        $quizItem->chapter = Chapter::findOrFail($quizItem->chapter_id);
+                        $quizItem->subject = Subject::findOrFail($quizItem->chapter->subject_id);
+                        $quizItem->standard = Standard::findOrFail($quizItem->chapter->subject->standard_id);
+                    } else {
+                        $check = Course::where('id', $course_id)->whereJsonContains('standard_id', (string) $quizItem->chapter->subject->standard_id)->exists();
+                        if ($check) {
+                            $quiz_flag = true;
+                            $quizItem->chapter = Chapter::findOrFail($quizItem->chapter_id);
+                            $quizItem->subject = Subject::findOrFail($quizItem->chapter->subject_id);
+                            $quizItem->standard = Standard::findOrFail($quizItem->chapter->subject->standard_id);
+                        }
+                    }
+                }
+
+                if ($quiz_flag) {
+                    $questions = $quizItem->totalQuestions($quizItem->id);
+                    $questions = Questions::whereIn('questions.id', $questions)
+                        ->join('standards', 'standards.id', '=', 'questions.standard_id')
+                        ->join('chapters', 'chapters.id', '=', 'questions.chapter_id')
+                        ->join('subjects', 'subjects.id', '=', 'questions.subject_id')
+                        ->join('mediums', 'mediums.id', '=', 'standards.medium_id')
+                        ->join('boards', 'boards.id', '=', 'mediums.board_id')
+                        ->join('states', 'states.id', '=', 'boards.state_id')
+                        ->select(
+                            'questions.id',
+                            'questions.question_type',
+                            'questions.questions',
+                            'questions.options',
+                            'questions.correct_answer',
+                            'questions.correct_marks',
+                            'questions.explanation',
+                            'questions.questionsImage',
+                            'standards.id as standard_id',
+                            'standards.name as standard_name',
+                            'mediums.id as medium_id',
+                            'mediums.name as medium_name',
+                            'subjects.id as subject_id',
+                            'subjects.name as subject_name',
+                            'chapters.id as chapter_id',
+                            'chapters.name as chapter_name',
+                            'boards.id as board_id',
+                            'boards.name as board_name'
+                        )
+                        ->get();
+
+                    foreach ($questions as $question) {
+                        $options = json_decode($question->options, true);
+                        $optionsArray = [];
+                        foreach ($options as $key => $value) {
+                            $optionsArray[] = (object)[$key => $value];
+                        }
+                        $question->options = $optionsArray;
+                    }
+
+                    $quizData = $quizItem->toArray();
+                    $quizData['questions'] = $questions->toArray();
+                    $data[] = $quizData;
+                }
+            }
+        }
+
+        return $this->sendResponse($data, 'Data fetched Successfully.');
+    }
+
 
     public function submitQuiz(Request $request){
         $jsonData = $request->getContent();

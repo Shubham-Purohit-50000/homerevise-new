@@ -107,6 +107,7 @@
                         <a href="javascript:void(0)" id="addQuestionsVisibility" class="btn btn-success text-white">Add Questions</a>
                         <a href="javascript:void(0)" id="viewQuestionsVisibility" class="btn btn-info text-white">View Questions </a>
                         <a href="{{ route('quizes.edit', ['quize' => $quiz->id]) }}" class="btn btn-danger text-white">Back</a>
+                        <a href="{{ url('admin/quizes') }}" id="done_btn" class="btn btn-warning text-white">Done</a>
                         <div class="card-body">
                             <div class="row" id="add_questions">
                                 <div class="col-sm-3" style="    padding: 25px;background: #00808012;">
@@ -187,7 +188,7 @@
 </div>
 <script>
     $(document).ready(function() {
-
+        $("#done_btn").hide();
         $('.js-example-basic-multiple').select2();
         $('#addQuestionsVisibility').on('click', function(){
             $("#add_questions").show();    
@@ -211,10 +212,9 @@
                 data: dataToSend,
                 success: function(data) {
                     // Handle the success response here
-                    console.log('Success:', data.questions);
-                    console.log('Success:', data.questions.length);
                     $(".view_question_no_title").html("Questions (" + data.questions.length + ")");
                     // Check if the 'questions' property exists in the response data
+                    
                     if (data.hasOwnProperty('questions')) {
                         var questions = data.questions;
                         var questionBox = document.querySelector('.view_question-box');
@@ -381,6 +381,11 @@
                     console.log('Success:', data.questions.length);
                     $(".question_no_title").html("Questions (" + data.questions.length + ")");
                     // Check if the 'questions' property exists in the response data
+                    if(data.questions.length > 0){
+                        $("#done_btn").show();
+                    }else{
+                        $("#done_btn").hide();
+                    }
                     if (data.hasOwnProperty('questions')) {
                         var questions = data.questions;
                         var questionBox = document.querySelector('.question-box');
