@@ -26,6 +26,11 @@ class QuizController extends BaseController
 
     public function getQuiz(Request $request){
         $data = [];
+        return $this->sendResponse($data, 'Data fetched Successfully.');
+    }
+
+    public function getQuiz_working_fine_but_with_big_response(Request $request){
+        $data = [];
         $course_ids = [];
         if(auth()->user()){
             $activatedCourses = auth()->user()->activation;
