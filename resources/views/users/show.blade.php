@@ -333,22 +333,24 @@
                                                     $json = json_decode($user->database)->json;
                                                     $quiz_analytics = json_decode($json)->quiz_analytics;
                                                 @endphp 
-                                                @foreach($quiz_analytics as $item)
-                                                <tr >
-                                                    <td> {{$item->id}}</td>
-                                                    <td> {{$item->quiz_name}}</td>
-                                                    <td> {{$item->total_questions}}</td>
-                                                    <td> {{$item->questions_attempted}}</td>
-                                                    <td> {{$item->marks_earned}}</td>
-                                                    <td> {{$item->total_marks}}</td>
-                                                    <td> {{$item->right_questions}}</td> 
-                                                    <td> {{$item->wrong_questions}}</td>
-                                                    <td> {{ date('Y-m-d H:i:s', $item->date / 1000) }} </td>
-                                                </tr>
-                                                @endforeach
-                                                @else
-                                                <td colspan="6"><center><h3>Data not available :(</h3><center></td>
-                                            @endif
+                                                @if(filled($quiz_analytics) && is_array($quiz_analytics))
+                                                    @foreach($quiz_analytics as $item)
+                                                    <tr >
+                                                        <td> {{$item->id}}</td>
+                                                        <td> {{$item->quiz_name}}</td>
+                                                        <td> {{$item->total_questions}}</td>
+                                                        <td> {{$item->questions_attempted}}</td>
+                                                        <td> {{$item->marks_earned}}</td>
+                                                        <td> {{$item->total_marks}}</td>
+                                                        <td> {{$item->right_questions}}</td> 
+                                                        <td> {{$item->wrong_questions}}</td>
+                                                        <td> {{ date('Y-m-d H:i:s', $item->date / 1000) }} </td>
+                                                    </tr>
+                                                    @endforeach
+                                                @endif
+                                        @else
+                                            <td colspan="6"><center><h3>Data not available :(</h3><center></td>
+                                        @endif
                                         </tbody> 
                                     </table>
                                 <!-- title -->
