@@ -329,27 +329,42 @@
                                         </thead> 
                                         <tbody>
                                         @if(filled($user->database))
-                                                @php
-                                                    $json = json_decode($user->database)->json;
-                                                    $quiz_analytics = json_decode($json)->quiz_analytics;
-                                                @endphp 
-                                                @if(filled($quiz_analytics) && is_array($quiz_analytics))
-                                                    @foreach($quiz_analytics as $item)
-                                                    <tr >
-                                                        <td> {{$item->id}}</td>
-                                                        <td> {{$item->quiz_name}}</td>
-                                                        <td> {{$item->total_questions}}</td>
-                                                        <td> {{$item->questions_attempted}}</td>
-                                                        <td> {{$item->marks_earned}}</td>
-                                                        <td> {{$item->total_marks}}</td>
-                                                        <td> {{$item->right_questions}}</td> 
-                                                        <td> {{$item->wrong_questions}}</td>
-                                                        <td> {{ date('Y-m-d H:i:s', $item->date / 1000) }} </td>
+                                            @php
+                                                try {
+                                                    $json = json_decode($user->database);
+                                                    $nestedJson = $json->json ?? null; // Ensure 'json' exists in the first level
+                                                    $quiz_analytics = $nestedJson->quiz_analytics ?? null; // Safely access 'quiz_analytics'
+                                                } catch (Exception $e) {
+                                                    $quiz_analytics = null; // Handle invalid JSON or unexpected errors
+                                                }
+                                            @endphp
+                                            @if(filled($quiz_analytics) && is_array($quiz_analytics))
+                                                @foreach($quiz_analytics as $item)
+                                                    <tr>
+                                                        <td>{{ $item->id ?? 'N/A' }}</td>
+                                                        <td>{{ $item->quiz_name ?? 'N/A' }}</td>
+                                                        <td>{{ $item->total_questions ?? 'N/A' }}</td>
+                                                        <td>{{ $item->questions_attempted ?? 'N/A' }}</td>
+                                                        <td>{{ $item->marks_earned ?? 'N/A' }}</td>
+                                                        <td>{{ $item->total_marks ?? 'N/A' }}</td>
+                                                        <td>{{ $item->right_questions ?? 'N/A' }}</td>
+                                                        <td>{{ $item->wrong_questions ?? 'N/A' }}</td>
+                                                        <td>{{ isset($item->date) ? date('Y-m-d H:i:s', $item->date / 1000) : 'N/A' }}</td>
                                                     </tr>
-                                                    @endforeach
-                                                @endif
+                                                @endforeach
+                                            @else
+                                                <tr>
+                                                    <td colspan="9">
+                                                        <center><h3>Data not available :(</h3></center>
+                                                    </td>
+                                                </tr>
+                                            @endif
                                         @else
-                                            <td colspan="6"><center><h3>Data not available :(</h3><center></td>
+                                            <tr>
+                                                <td colspan="9">
+                                                    <center><h3>Data not available :(</h3></center>
+                                                </td>
+                                            </tr>
                                         @endif
                                         </tbody> 
                                     </table>
