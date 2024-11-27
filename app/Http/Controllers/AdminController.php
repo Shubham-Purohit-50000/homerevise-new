@@ -338,8 +338,8 @@ class AdminController extends Controller
     public function downloadReport($id)
     {
         $user = User::findOrFail($id);
-        $json = json_decode($user->database)->json;
 
+        $json = json_decode($user->database)->json;
         $data = json_decode($json, true);
 
         $spreadsheet = new Spreadsheet();
@@ -360,15 +360,17 @@ class AdminController extends Controller
         $sheet->getStyle('A1:G1')->applyFromArray($styleArray);
 
         $row = 2;
-        foreach ($data['played_topics'] as $played_topic) {
-            $sheet->setCellValue('A' . $row, $played_topic['id']);
-            $sheet->setCellValue('B' . $row, $played_topic['subject']);
-            $sheet->setCellValue('C' . $row, $played_topic['chapter']);
-            $sheet->setCellValue('D' . $row, $played_topic['topic']);
-            $sheet->setCellValue('E' . $row, $played_topic['duration_minutes']);
-            $sheet->setCellValue('F' . $row, $played_topic['total_topics']);
-            $sheet->setCellValue('G' . $row, date('Y-m-d H:i:s', $played_topic['date'] / 1000));
-            $row++;
+        if (isset($data['played_topics']) && is_array($data['played_topics'])) {
+            foreach ($data['played_topics'] as $played_topic) {
+                $sheet->setCellValue('A' . $row, $played_topic['id'] ?? '');
+                $sheet->setCellValue('B' . $row, $played_topic['subject'] ?? '');
+                $sheet->setCellValue('C' . $row, $played_topic['chapter'] ?? '');
+                $sheet->setCellValue('D' . $row, $played_topic['topic'] ?? '');
+                $sheet->setCellValue('E' . $row, $played_topic['duration_minutes'] ?? '');
+                $sheet->setCellValue('F' . $row, $played_topic['total_topics'] ?? '');
+                $sheet->setCellValue('G' . $row, isset($played_topic['date']) ? date('Y-m-d H:i:s', $played_topic['date'] / 1000) : '');
+                $row++;
+            }
         }
 
         // Create quiz_analytics sheet
@@ -380,26 +382,22 @@ class AdminController extends Controller
         $headers = ['ID', 'Quiz Name', 'Total Questions', 'Questions Attempted', 'Marks Earned', 'Total Marks', 'Right Questions', 'Wrong Questions', 'Date'];
         $sheet->fromArray($headers, NULL, 'A1');
 
-        // Set header font style to bold
-        $styleArray = [
-            'font' => [
-                'bold' => true,
-            ],
-        ];
         $sheet->getStyle('A1:I1')->applyFromArray($styleArray);
 
         $row = 2;
-        foreach ($data['quiz_analytics'] as $quiz_analytic) {
-            $sheet->setCellValue('A' . $row, $quiz_analytic['id']);
-            $sheet->setCellValue('B' . $row, $quiz_analytic['quiz_name']);
-            $sheet->setCellValue('C' . $row, $quiz_analytic['total_questions']);
-            $sheet->setCellValue('D' . $row, $quiz_analytic['questions_attempted']);
-            $sheet->setCellValue('E' . $row, $quiz_analytic['marks_earned']);
-            $sheet->setCellValue('F' . $row, $quiz_analytic['total_marks']);
-            $sheet->setCellValue('G' . $row, $quiz_analytic['right_questions']);
-            $sheet->setCellValue('H' . $row, $quiz_analytic['wrong_questions']);
-            $sheet->setCellValue('I' . $row, date('Y-m-d H:i:s', $quiz_analytic['date'] / 1000));
-            $row++;
+        if (isset($data['quiz_analytics']) && is_array($data['quiz_analytics'])) {
+            foreach ($data['quiz_analytics'] as $quiz_analytic) {
+                $sheet->setCellValue('A' . $row, $quiz_analytic['id'] ?? '');
+                $sheet->setCellValue('B' . $row, $quiz_analytic['quiz_name'] ?? '');
+                $sheet->setCellValue('C' . $row, $quiz_analytic['total_questions'] ?? '');
+                $sheet->setCellValue('D' . $row, $quiz_analytic['questions_attempted'] ?? '');
+                $sheet->setCellValue('E' . $row, $quiz_analytic['marks_earned'] ?? '');
+                $sheet->setCellValue('F' . $row, $quiz_analytic['total_marks'] ?? '');
+                $sheet->setCellValue('G' . $row, $quiz_analytic['right_questions'] ?? '');
+                $sheet->setCellValue('H' . $row, $quiz_analytic['wrong_questions'] ?? '');
+                $sheet->setCellValue('I' . $row, isset($quiz_analytic['date']) ? date('Y-m-d H:i:s', $quiz_analytic['date'] / 1000) : '');
+                $row++;
+            }
         }
 
         // Create daily_time sheet
@@ -411,22 +409,18 @@ class AdminController extends Controller
         $headers = ['Subject', 'Topic', 'Chapter', 'Date', 'Duration (minutes)'];
         $sheet->fromArray($headers, NULL, 'A1');
 
-        // Set header font style to bold
-        $styleArray = [
-            'font' => [
-                'bold' => true,
-            ],
-        ];
         $sheet->getStyle('A1:F1')->applyFromArray($styleArray);
 
         $row = 2;
-        foreach ($data['daily_time'] as $daily_time) {
-            $sheet->setCellValue('A' . $row, $daily_time['subject']);
-            $sheet->setCellValue('B' . $row, $daily_time['topic']);
-            $sheet->setCellValue('C' . $row, $daily_time['chapter']);
-            $sheet->setCellValue('D' . $row, date('Y-m-d H:i:s', $daily_time['date'] / 1000));
-            $sheet->setCellValue('E' . $row, $daily_time['duration_minutes']);
-            $row++;
+        if (isset($data['daily_time']) && is_array($data['daily_time'])) {
+            foreach ($data['daily_time'] as $daily_time) {
+                $sheet->setCellValue('A' . $row, $daily_time['subject'] ?? '');
+                $sheet->setCellValue('B' . $row, $daily_time['topic'] ?? '');
+                $sheet->setCellValue('C' . $row, $daily_time['chapter'] ?? '');
+                $sheet->setCellValue('D' . $row, isset($daily_time['date']) ? date('Y-m-d H:i:s', $daily_time['date'] / 1000) : '');
+                $sheet->setCellValue('E' . $row, $daily_time['duration_minutes'] ?? '');
+                $row++;
+            }
         }
 
         // Set the first sheet as the active sheet
@@ -440,5 +434,6 @@ class AdminController extends Controller
 
         return response()->download($temp_file, $fileName)->deleteFileAfterSend(true);
     }
+
 
    }
