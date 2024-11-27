@@ -25,115 +25,11 @@ class QuizController extends BaseController
     //     uske related koi quiz h ki nhi
     // }
 
-    public function getQuiz_ss(Request $request){
+    public function getQuiz(Request $request){
         $data = [];
         return $this->sendResponse($data, 'Data fetched Successfully.');
     }
-
-    public function getQuiz(Request $request)
-    {
-        // Get the authenticated user's ID to create a unique cache key.
-        $userId = auth()->id();
-        $cacheKey = "quiz_data_user_{$userId}";
-
-        // Check if cached data exists, else fetch and cache the data.
-        $data = Cache::remember($cacheKey, 86400, function () {
-            // Fetch and process the data here.
-            $data = [];
-            $course_ids = [];
-
-            if (auth()->user()) {
-                $activatedCourses = auth()->user()->activation;
-
-                if (count($activatedCourses) > 0) {
-                    foreach ($activatedCourses as $item) {
-                        $course_ids[] = "$item->course_id";
-                    }
-                }
-            } else {
-                return $this->sendError('Unauthorised.', ['error' => 'User is not logged in'], 401);
-            }
-
-            $quiz = Quiz::with(['standard', 'subject', 'chapter'])->get();
-
-            foreach ($course_ids as $course_id) {
-                foreach ($quiz as $quizItem) {
-                    $quiz_flag = 0;
-
-                    if ($quizItem->standard_id) {
-                        $quizStandardId = (string)$quizItem->standard_id;
-                        $check = Course::where('id', $course_id)
-                            ->whereJsonContains('standard_id', $quizStandardId)
-                            ->exists();
-                        if ($check) {
-                            $quiz_flag = 1;
-                            $quizItem->standard = Standard::findOrFail($quizItem->standard_id);
-                        }
-                    }
-
-                    if ($quizItem->subject_id) {
-                        $quizSubjectId = (string)$quizItem->subject_id;
-                        $check = Course::where('id', $course_id)
-                            ->whereJsonContains('subject_id', $quizSubjectId)
-                            ->exists();
-                        if ($check) {
-                            $quiz_flag = 1;
-                            $quizItem->subject = Subject::findOrFail($quizItem->subject_id);
-                            $quizItem->standard = Standard::findOrFail($quizItem->subject->standard_id);
-                        } else {
-                            $check = Course::where('id', $course_id)
-                                ->whereJsonContains('standard_id', (string)$quizItem->subject->standard_id)
-                                ->exists();
-                            if ($check) {
-                                $quiz_flag = 1;
-                                $quizItem->subject = Subject::findOrFail($quizItem->subject_id);
-                                $quizItem->standard = Standard::findOrFail($quizItem->subject->standard_id);
-                            }
-                        }
-                    }
-
-                    if ($quiz_flag) {
-                        $questions = $quizItem->totalQuestions($quizItem->id);
-
-                        $questions = Questions::whereIn('questions.id', $questions)
-                            ->join('standards', 'standards.id', '=', 'questions.standard_id')
-                            ->join('chapters', 'chapters.id', '=', 'questions.chapter_id')
-                            ->join('subjects', 'subjects.id', '=', 'questions.subject_id')
-                            ->select(
-                                'questions.id',
-                                'questions.question_type',
-                                'questions.questions',
-                                'questions.options',
-                                'questions.correct_answer',
-                                'questions.correct_marks',
-                                'questions.explanation',
-                                'standards.name as standard_name',
-                                'subjects.name as subject_name',
-                                'chapters.name as chapter_name'
-                            )
-                            ->get();
-
-                        foreach ($questions as $question) {
-                            $options = json_decode($question->options, true);
-                            $optionsArray = [];
-                            foreach ($options as $key => $value) {
-                                $optionsArray[] = (object)[$key => $value];
-                            }
-                            $question->options = $optionsArray;
-                        }
-
-                        $quizItem->questions = $questions->toArray();
-                        $data[] = $quizItem;
-                    }
-                }
-            }
-
-            return $data; // Final processed data.
-        });
-
-        // Return the cached or processed data.
-        return $this->sendResponse($data, 'Data fetched successfully.');
-    }
+    
 
     public function getQuiz_working_fine_but_with_big_response(Request $request){
         $data = [];
