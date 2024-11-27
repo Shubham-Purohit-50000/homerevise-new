@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Validator;
 class AnalyticsController extends BaseController
 {
     public function pushAppAnalytics(Request $request){
-        
 
         $appUsage = AppUsage::where('user_id', auth()->user()->id)->first();   
         if($appUsage){

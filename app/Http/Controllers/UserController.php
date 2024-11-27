@@ -116,18 +116,35 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('success', 'Course added successfully');
     }
 
-    public function show(User $user){
+    public function show_without_app_uses(User $user){
         $activations = $user->activation; 
         $appUsage = AppUsage::where('user_id','=',$user->id)->first();
         $playedTopics = PlayedTopics::where('user_id','=',$user->id)->get();
 
-        $time = "00:00"; 
+        $time = "00:00";
         if($appUsage){            
              $time = $appUsage->app_usage_time ? $appUsage->app_usage_time : "0:0";
         }
         $quizAnalytics = QuizAnalytics::where('user_id','=',$user->id)->get();
 
         return view('users.show', compact('user','activations','time','playedTopics','quizAnalytics'));
+    }
+
+    public function show(User $user){
+        $activations = $user->activation;
+        $playedTopics = PlayedTopics::where('user_id','=',$user->id)->get();
+        $quizAnalytics = QuizAnalytics::where('user_id','=',$user->id)->get();
+
+        $json = json_decode($user->database)->json;
+        $data = json_decode($json, true);
+        $appUsage = null;
+        $time = "0";
+        if(isset($data['daily_time'])){
+            $appUsage = $data['daily_time'];
+            $time = array_sum(array_column($appUsage, 'duration_minutes'));
+        }
+
+        return view('users.show', compact('user','activations','time','playedTopics','quizAnalytics','appUsage'));
     }
 
     public function updateCourseDuration(Request $request, Activation $activation){

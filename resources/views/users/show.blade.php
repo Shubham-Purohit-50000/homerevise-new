@@ -246,11 +246,50 @@
                                     <thead>
                                         <tr class="bg-light">
                                             <th class="border-top-0">Time (m:s)</th>
-                                            <th class="border-top-0">{{$time}}</th>
+                                            <th class="border-top-0">{{$time}} (Minutes)</th>
                                         </tr>
                                     </thead> 
                                 </table>
                                 <!-- title -->
+                                 @if($appUsage!=null)
+                                <table class="table v-middle">
+                                    <thead>
+                                        <tr class="bg-light">
+                                            <th class="border-top-0">Subject</th>
+                                            <th class="border-top-0">Topic</th>
+                                            <th class="border-top-0">Chapter</th>
+                                            <th class="border-top-0">Date</th>
+                                            <th class="border-top-0">Duration</th>
+                                        </tr>
+                                    </thead> 
+                                    <tbody>
+                                    @forelse ($appUsage as $item)
+                                        <tr class="bg-light">
+                                            <td>{{$item['subject']}}</td>
+                                            <td>{{$item['topic']}}</td>
+                                            <td>{{$item['chapter']}}</td>
+                                            <td>{{ \Carbon\Carbon::createFromTimestampMs($item['date'])->format('d-M-Y') }}</td>
+                                            <td>
+                                                @php
+                                                    $minutes = $item['duration_minutes'];
+                                                    $days = floor($minutes / (24 * 60));
+                                                    $hours = floor(($minutes % (24 * 60)) / 60);
+                                                    $remainingMinutes = $minutes % 60;
+                                                @endphp
+
+                                                @if($days) {{$days}} days, @endif
+                                                @if($hours) {{$hours}} hrs, @endif
+                                                {{ $remainingMinutes }} min
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="5">No app usage data available.</td>
+                                        </tr>
+                                    @endforelse
+                                    </tbody>
+                                </table>
+                                @endif
                             </div>
                         </div> 
                         </div> 
@@ -273,27 +312,38 @@
                                                 <th class="border-top-0">Topic</th>
                                                 <th class="border-top-0">Duration(minutes)</th>
                                                 <th class="border-top-0">Total Topics</th> 
+                                                <th class="border-top-0">Date</th> 
                                             </tr>
                                         </thead> 
                                         <tbody>
-                                            @if(filled($user->database))
-                                                @php
-                                                    $json = json_decode($user->database)->json;
-                                                    $played_topics = json_decode($json)->played_topics;
-                                                @endphp
+                                        @if(filled($user->database))
+                                            @php
+                                                $json = json_decode($user->database)->json;
+                                                $decodedJson = json_decode($json);
+                                                $played_topics = $decodedJson->played_topics ?? []; // Fallback to empty array if null
+                                            @endphp
+                                            @if(!empty($played_topics))
                                                 @foreach($played_topics as $item)
-                                                <tr class="bg-light">
-                                                    <td> {{$item->id}}</td>
-                                                    <td> {{$item->subject}}</td>
-                                                    <td> {{$item->chapter}}</td>
-                                                    <td> {{$item->topic}}</td>
-                                                    <td> {{$item->duration_minutes}}</td>
-                                                    <td> {{$item->total_topics}}</td>
-                                                </tr>
+                                                    <tr class="bg-light">
+                                                        <td> {{$item->id}}</td>
+                                                        <td> {{$item->subject}}</td>
+                                                        <td> {{$item->chapter}}</td>
+                                                        <td> {{$item->topic}}</td>
+                                                        <td> {{$item->duration_minutes}}</td>
+                                                        <td> {{$item->total_topics}}</td>
+                                                        <td> {{ \Carbon\Carbon::createFromTimestampMs($item->date)->format('d-M-Y') }}</td>
+                                                    </tr>
                                                 @endforeach
-                                                @else
-                                                <td colspan="6"><center><h3>Data not available :(</h3><center></td>
+                                            @else
+                                                <tr>
+                                                    <td colspan="7"><center><h3>No topics played yet.</h3></center></td>
+                                                </tr>
                                             @endif
+                                        @else
+                                            <tr>
+                                                <td colspan="7"><center><h3>Data not available :(</h3></center></td>
+                                            </tr>
+                                        @endif
                                         </tbody> 
                                     </table>
                                 <!-- title -->
