@@ -130,22 +130,31 @@ class UserController extends Controller
         return view('users.show', compact('user','activations','time','playedTopics','quizAnalytics'));
     }
 
-    public function show(User $user){
+    public function show(User $user)
+    {
         $activations = $user->activation;
-        $playedTopics = PlayedTopics::where('user_id','=',$user->id)->get();
-        $quizAnalytics = QuizAnalytics::where('user_id','=',$user->id)->get();
-
-        $json = json_decode($user->database)->json;
-        $data = json_decode($json, true);
+        $playedTopics = PlayedTopics::where('user_id', '=', $user->id)->get();
+        $quizAnalytics = QuizAnalytics::where('user_id', '=', $user->id)->get();
+    
         $appUsage = null;
         $time = "0";
-        if(isset($data['daily_time'])){
-            $appUsage = $data['daily_time'];
-            $time = array_sum(array_column($appUsage, 'duration_minutes'));
+    
+        if (!empty($user->database)) {
+            // Decode the database property
+            $decodedDatabase = json_decode($user->database);
+    
+            if (isset($decodedDatabase->json)) {
+                $data = json_decode($decodedDatabase->json, true);
+    
+                if (isset($data['daily_time'])) {
+                    $appUsage = $data['daily_time'];
+                    $time = array_sum(array_column($appUsage, 'duration_minutes'));
+                }
+            }
         }
-
-        return view('users.show', compact('user','activations','time','playedTopics','quizAnalytics','appUsage'));
-    }
+    
+        return view('users.show', compact('user', 'activations', 'time', 'playedTopics', 'quizAnalytics', 'appUsage'));
+    }    
 
     public function updateCourseDuration(Request $request, Activation $activation){
 
