@@ -25,77 +25,81 @@ class QuizController extends BaseController
     //     uske related koi quiz h ki nhi
     // }
 
-    public function getQuiz(Request $request){
-        $data = [];
-        return $this->sendResponse($data, 'Data fetched Successfully.');
-    }
-    
-
-    public function getQuiz_working_fine_but_with_big_response(Request $request){
+    public function getQuiz(Request $request)
+    {
         $data = [];
         $course_ids = [];
-        if(auth()->user()){
-            $activatedCourses = auth()->user()->activation;
-            if(count($activatedCourses) > 0){
-                foreach($activatedCourses as $item){ 
-                    $course_ids[] = "$item->course_id";
-                }
-            } 
-        }else{
-            return $this->sendError('Unauthorised.', ['error' => 'User is not logedIn'], 401);
-        }
-        $quiz = Quiz::all();
-        foreach ($course_ids as $course_id) {
-            foreach ($quiz as $quizItem) {  
-                $quiz_flag = 0;
-                if ($quizItem->standard_id) {
-                    $quizStandardId = (string) $quizItem->standard_id;
-                    $check = Course::where('id', $course_id)->whereJsonContains('standard_id', (string) $quizStandardId)->exists();
-                    if($check){
-                        $quiz_flag = 1;
-                        $quizItem->standard = Standard::findOrFail($quizItem->standard_id);
-                    } 
-                } 
-                if ($quizItem->subject_id) {
-                    $quizSubjectId = (string) $quizItem->subject_id;
-                    $check = Course::where('id', $course_id)->whereJsonContains('subject_id', (string) $quizSubjectId)->exists();
-                    if($check){
-                        $quiz_flag = 1;
-                        $quizItem->subject = Subject::findOrFail($quizItem->subject_id);
-                        $quizItem->standard = Standard::findOrFail($quizItem->subject->standard_id);
-                    }else{
-                        // get standard_ids belongs to this subject and if this standard id present in course the valid
-                        $check = Course::where('id', $course_id)->whereJsonContains('standard_id', (string) $quizItem->subject->standard_id)->exists();
-                        if($check){
-                            $quiz_flag = 1;
-                            $quizItem->subject = Subject::findOrFail($quizItem->subject_id);
-                            $quizItem->standard = Standard::findOrFail($quizItem->subject->standard_id);
-                        } 
-                    }
-                } 
-                if ($quizItem->chapter_id) {
-                    // $quiz_flag = 1;
 
-                    $quizSubjectId = (string) $quizItem->chapter->subject_id;
-                    $check = Course::where('id', $course_id)->whereJsonContains('subject_id', (string) $quizSubjectId)->exists();
-                    if($check){
-                        $quiz_flag = 1;
-                        $quizItem->chapter = Chapter::findOrFail($quizItem->chapter_id);
-                        $quizItem->subject = Subject::findOrFail($quizItem->chapter->subject_id);
-                        $quizItem->standard = Standard::findOrFail($quizItem->chapter->subject->standard_id);
-                    }else{
-                        // get standard_ids belongs to this subject and if this standard id present in course the valid
-                        $check = Course::where('id', $course_id)->whereJsonContains('standard_id', (string) $quizItem->chapter->subject->standard_id)->exists();
-                        if($check){
-                            $quiz_flag = 1;
-                            $quizItem->chapter = Chapter::findOrFail($quizItem->chapter_id);
-                            $quizItem->subject = Subject::findOrFail($quizItem->chapter->subject_id);
-                            $quizItem->standard = Standard::findOrFail($quizItem->chapter->subject->standard_id);
-                        } 
+        if (auth()->user()) {
+            $activatedCourses = auth()->user()->activation;
+            $course_ids = $activatedCourses->pluck('course_id')->toArray();
+        } else {
+            return $this->sendError('Unauthorised.', ['error' => 'User is not logged in'], 401);
+        }
+
+        $quizzes = Quiz::all();
+        foreach ($course_ids as $course_id) {
+            foreach ($quizzes as $quizItem) {
+                $quiz_flag = false;
+
+                if ($quizItem->standard_id) {
+                    $check = Course::where('id', $course_id)
+                        ->whereJsonContains('standard_id', (string) $quizItem->standard_id)
+                        ->exists();
+                    if ($check) {
+                        $quiz_flag = true;
+                        $quizItem->standard = Standard::findOrFail($quizItem->standard_id);
                     }
                 }
-                
-                // quiz k under user k course id h to question nikalenge
+
+                if ($quizItem->subject_id) {
+                    $subject = Subject::findOrFail($quizItem->subject_id);
+                    $quizItem->subject = $subject;
+
+                    $check = Course::where('id', $course_id)
+                        ->whereJsonContains('subject_id', (string) $quizItem->subject_id)
+                        ->exists();
+
+                    if ($check) {
+                        $quiz_flag = true;
+                        $quizItem->standard = Standard::findOrFail($subject->standard_id);
+                    } else {
+                        $check = Course::where('id', $course_id)
+                            ->whereJsonContains('standard_id', (string) $subject->standard_id)
+                            ->exists();
+
+                        if ($check) {
+                            $quiz_flag = true;
+                            $quizItem->standard = Standard::findOrFail($subject->standard_id);
+                        }
+                    }
+                }
+
+                if ($quizItem->chapter_id) {
+                    $chapter = Chapter::findOrFail($quizItem->chapter_id);
+                    $quizItem->chapter = $chapter;
+
+                    $check = Course::where('id', $course_id)
+                        ->whereJsonContains('subject_id', (string) $chapter->subject_id)
+                        ->exists();
+
+                    if ($check) {
+                        $quiz_flag = true;
+                        $quizItem->subject = Subject::findOrFail($chapter->subject_id);
+                        $quizItem->standard = Standard::findOrFail($quizItem->subject->standard_id);
+                    } else {
+                        $check = Course::where('id', $course_id)
+                            ->whereJsonContains('standard_id', (string) $quizItem->chapter->subject->standard_id)
+                            ->exists();
+
+                        if ($check) {
+                            $quiz_flag = true;
+                            $quizItem->subject = Subject::findOrFail($chapter->subject_id);
+                            $quizItem->standard = Standard::findOrFail($chapter->subject->standard_id);
+                        }
+                    }
+                }
+
                 if ($quiz_flag) {
                     $questions = $quizItem->totalQuestions($quizItem->id);
                     $questions = Questions::whereIn('questions.id', $questions)
@@ -126,29 +130,23 @@ class QuizController extends BaseController
                             'boards.name as board_name'
                         )
                         ->get();
-        
+
                     foreach ($questions as $question) {
                         $options = json_decode($question->options, true);
-                        $optionsArray = [];
-                        foreach ($options as $key => $value) {
-                            $optionsArray[] = (object) [$key => $value];
-                        }
-                        $question->options = $optionsArray;
+                        $question->options = array_map(fn($key, $value) => (object) [$key => $value], array_keys($options), $options);
                     }
-        
+
                     $quizItem->questions = $questions->toArray();
-                    if($quizItem->type == "STWQ"){
-                        $data['Standard_wise_quiz'][] = $quizItem;                
-                    }
-                    if($quizItem->type == "SWQ"){
-                        $data['Subject_wise_quiz'][] = $quizItem;                
-                    }
-                    if($quizItem->type == "CWQ"){
-                        $data['Chapter_wise_quiz'][] = $quizItem;                
-                    }
+                    $data[$quizItem->type . '_quiz'][] = $quizItem;
                 }
             }
         }
+
+        return $this->sendResponse($data, 'Data fetched successfully.');
+    }
+
+    public function getQuiz_ss(Request $request){
+        $data = [];
         return $this->sendResponse($data, 'Data fetched Successfully.');
     }
 
