@@ -25,7 +25,7 @@ class QuizController extends BaseController
     //     uske related koi quiz h ki nhi
     // }
 
-    public function getQuiz(Request $request)
+    public function getQuiz_ss(Request $request)
     {
         $data = [];
         $course_ids = [];
@@ -145,7 +145,7 @@ class QuizController extends BaseController
         return $this->sendResponse($data, 'Data fetched successfully.');
     }
 
-    public function getQuiz_ss(Request $request){
+    public function getQuiz(Request $request){
         $data = [];
         return $this->sendResponse($data, 'Data fetched Successfully.');
     }
